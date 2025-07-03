@@ -8,3 +8,13 @@ export const isNewProduct = (createdAt?: string): boolean => {
   
     return diffInDays <= 14;
   };
+
+  export const getFeaturedLevel = (
+    viewCount: number,
+    variants: { sold_quantity?: number }[]
+  ): number => {
+    const score =
+      (viewCount || 0) * 0.5 +
+      variants.reduce((sum, v) => sum + (v.sold_quantity || 0), 0) * 2;
+    return score >= 5 ? 1 : 0;
+  };

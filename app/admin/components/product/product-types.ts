@@ -2,9 +2,12 @@ export interface ProductVariant {
   id?: number | string;
   size: string;
   color: string; // chỉ cần tên
-  price: number;
-  stock_quantity: number;
+  price?: number;
+  stock_quantity?: number;
+  sold_quantity?: number;
   id_category?: string;
+  isBulkCreated?: boolean;
+
 }
 
   
@@ -12,6 +15,7 @@ export interface ProductVariant {
     id: string;
     name: string;
     category: string;
+    categoryName: string;
     price: number;
     stock: number;
     status: "active" | "inactive";
@@ -26,6 +30,7 @@ export interface ProductVariant {
   export interface CategoryWithType {
     _id: string;
     name: string;
+    categoryType: string;
     typeId?: {
       _id: string;
       name: string;
@@ -51,13 +56,25 @@ export interface ProductVariant {
     images?: string[];
     sale?: number;
     product_hot?: number;
-    // product_new?: number;
     isActive?: boolean;
     description?: string;
-    id_category?: string;
-    variants?: ProductVariant[];
     createdAt?: string;
+    viewCount?: number;
+  
+    id_category?: {
+      _id: string;
+      name: string;
+      typeId?: {
+        _id: string;
+        name: string;
+        isActive?: boolean;
+      };
+    };
+  
+    // ✅ Không được quên phần này:
+    variants?: ProductVariant[];
   }
+  
 
   export interface Color {
     _id: string;
@@ -65,5 +82,9 @@ export interface ProductVariant {
     hex: string;
   }
   
-  
-  
+export interface SafeRawProduct extends Omit<RawProduct, "sale" | "price" | "images" | "variants"> {
+  sale: number;
+  price: number;
+  images: string[];
+  variants: ProductVariant[];
+}

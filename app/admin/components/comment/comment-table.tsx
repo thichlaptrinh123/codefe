@@ -100,21 +100,28 @@ export default function CommentTable({ data, onToggleStatus }: Props) {
               </span>
             </div>
 
-            {/* Thao tác */}
-            <div className="flex justify-center">
-              <button
-                onClick={() => onToggleStatus?.(item.id)}
-                className={clsx(
-                  "px-3 py-2 rounded-md transition duration-200 inline-flex items-center justify-center text-base",
-                  item.status === "active"
-                    ? "bg-green-100 text-green-700 hover:bg-green-200"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                )}
-                title={item.status === "active" ? "Ẩn bình luận" : "Hiện bình luận"}
-              >
-                <i className={item.status === "active" ? "bx bx-hide" : "bx bx-show"}></i>
-              </button>
-            </div>
+        {/* Thao tác */}
+      <div className="flex justify-center">
+        <button
+          onClick={() => onToggleStatus?.(item.id)}
+          className={clsx(
+            "px-3 py-2 rounded-md transition duration-200 inline-flex items-center justify-center text-base",
+            item.status === "active"
+              ? "bg-green-100 text-green-700 hover:bg-green-200"
+              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+          )}
+          title={item.status === "active" ? "Ẩn bình luận" : "Hiện bình luận"}
+        >
+          <i
+            className={
+              item.status === "active"
+                ? "bx bx-message-square-x"
+                : "bx bx-message-square-add"
+            }
+          />
+        </button>
+      </div>
+
           </div>
         );
       })}

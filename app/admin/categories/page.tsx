@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import Pagination from "../components/shared/pagination";
 import StatusFilter from '../components/shared/status-filter';
 import SearchInput from '../components/shared/search-input';
-import CategoryTypeFilter from '../components/shared/category-type-filter';
+import CategoryTypeFilter from '../components/category/category-type-filter';
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 
@@ -36,7 +36,7 @@ export default function CategoriesPage() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterTypeId, setFilterTypeId] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
   useEffect(() => {
     fetchCategories();
@@ -64,15 +64,18 @@ export default function CategoriesPage() {
   };
 
   useEffect(() => {
+    // Nếu user chưa chọn loại nào (typeId là ""), thì mới tự gán loại
+    if (formData.typeId !== "") return;
+  
     const matchedType = categoryTypes.find((type) =>
       formData.name.toLowerCase().includes(type.name.toLowerCase())
     );
-
+  
     if (matchedType && !editingCategory) {
       setFormData((prev) => ({ ...prev, typeId: matchedType._id }));
     }
-  }, [formData.name, categoryTypes]);
-
+  }, [formData.name, categoryTypes, formData.typeId, editingCategory]);
+  
   const handleEditClick = (id: string) => {
     const category = categories.find((cat) => cat._id === id);
     if (category) {
@@ -94,14 +97,13 @@ export default function CategoriesPage() {
   const handleAddOrUpdate = async () => {
     const trimmedName = formData.name.trim();
     const nameLower = trimmedName.toLowerCase();
+    const isParentCategory = formData.typeId === "parent";
   
-    // Kiểm tra tên danh mục có bị bỏ trống không
     if (!trimmedName) {
       toast.warning("Vui lòng nhập tên danh mục!");
       return;
     }
   
-    // Không cho trùng 100% với tên loại danh mục
     const exactMatchType = categoryTypes.find(
       (type) => type.name.toLowerCase() === nameLower
     );
@@ -110,12 +112,53 @@ export default function CategoriesPage() {
       return;
     }
   
-    // Kiểm tra xem tên có chứa tên loại danh mục nào không → xác định loại phù hợp
     const matchedType = categoryTypes.find((type) =>
       nameLower.includes(type.name.toLowerCase())
     );
   
-    // Nếu không khớp loại nào → hỏi người dùng có muốn tạo loại danh mục mới không
+    // 👉 Trường hợp người dùng chọn "Loại danh mục cha"
+    if (isParentCategory) {
+      const confirm = await Swal.fire({
+        title: "Tạo loại danh mục mới?",
+        text: `Bạn muốn tạo loại danh mục mới là "${trimmedName}"?`,
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Tạo mới",
+        cancelButtonText: "Hủy",
+      });
+  
+      if (!confirm.isConfirmed) return;
+  
+      const value = trimmedName
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9\-]/g, "");
+  
+      const res = await fetch("/api/category-type", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmedName, value, isActive: true }),
+      });
+  
+      if (!res.ok) {
+        const errText = await res.text();
+        Swal.fire({
+          icon: "error",
+          title: "Không thành công",
+          text: errText || "Tạo loại danh mục thất bại!",
+        });
+        return;
+      }
+  
+      await fetchCategoryTypes();
+      toast.success("Đã tạo loại danh mục mới.");
+      setFormData({ name: "", status: "active", typeId: "" });
+      return;
+    }
+  
+    // 👉 Trường hợp không có loại khớp và không chọn loại cha
     if (!matchedType) {
       const confirmResult = await Swal.fire({
         title: "Tạo loại danh mục mới?",
@@ -128,33 +171,36 @@ export default function CategoriesPage() {
   
       if (!confirmResult.isConfirmed) return;
   
-      // Gửi yêu cầu tạo loại danh mục mới
+      const value = trimmedName
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9\-]/g, "");
+  
       const res = await fetch("/api/category-type", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: trimmedName, isActive: true }),
+        body: JSON.stringify({ name: trimmedName, value, isActive: true }),
       });
   
-      // Nếu lỗi → hiển thị cảnh báo
       if (!res.ok) {
-        const err = await res.json();
+        const errText = await res.text();
         Swal.fire({
           icon: "error",
           title: "Không thành công",
-          text: err.message || "Tạo loại danh mục thất bại!",
+          text: errText || "Tạo loại danh mục thất bại!",
         });
         return;
       }
   
-      // Cập nhật danh sách loại danh mục sau khi tạo
       await fetchCategoryTypes();
-      setFormData({ name: "", status: "active", typeId: "" });
-  
       toast.success("Đã tạo loại danh mục mới.");
-      return; // ❌ Không tạo danh mục ngay lúc này
+      setFormData({ name: "", status: "active", typeId: "" });
+      return;
     }
   
-    // Nếu có loại khớp → tiến hành thêm hoặc cập nhật danh mục
+    // 👉 Trường hợp bình thường: gán theo loại tìm được
     const body = {
       name: trimmedName,
       isActive: formData.status === "active",
@@ -163,8 +209,6 @@ export default function CategoriesPage() {
   
     try {
       let res;
-  
-      // Nếu đang chỉnh sửa → gọi PUT
       if (editingCategory) {
         res = await fetch(`/api/category/${editingCategory._id}`, {
           method: "PUT",
@@ -172,7 +216,6 @@ export default function CategoriesPage() {
           body: JSON.stringify(body),
         });
       } else {
-        // Nếu đang thêm mới → gọi POST
         res = await fetch("/api/category", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -180,7 +223,6 @@ export default function CategoriesPage() {
         });
       }
   
-      // Kiểm tra lỗi từ server
       if (!res.ok) {
         const err = await res.json();
         Swal.fire({
@@ -195,14 +237,12 @@ export default function CategoriesPage() {
         return;
       }
   
-      // Nếu thành công → hiển thị thông báo
       toast.success(
         editingCategory
           ? "Cập nhật danh mục thành công!"
           : "Thêm danh mục mới thành công!"
       );
   
-      // Làm mới dữ liệu và form
       await fetchCategories();
       await fetchCategoryTypes();
       setFormData({ name: "", status: "active", typeId: "" });
@@ -217,6 +257,7 @@ export default function CategoriesPage() {
     }
   };
   
+  
 
   const getFilteredCategories = () => {
     return categories.filter((cat) => {
@@ -225,23 +266,24 @@ export default function CategoriesPage() {
         filterStatus === "all" ||
         (filterStatus === "active" && cat.isActive) ||
         (filterStatus === "inactive" && !cat.isActive);
-      const matchType =
-        filterTypeId === "all" ||
-        (typeof cat.typeId === "object"
-          ? cat.typeId._id === filterTypeId
-          : cat.typeId === filterTypeId);
+  
+      const catTypeId = typeof cat.typeId === "object" ? cat.typeId._id : cat.typeId;
+      const matchType = filterTypeId === "all" || catTypeId === filterTypeId;
+  
       return matchSearch && matchStatus && matchType;
     });
   };
+  
 
   const filteredCategories = getFilteredCategories();
-  const paginatedCategories = filteredCategories.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-  const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
 
-  const ITEMS_PER_PAGE = 5;
+  const ITEMS_PER_PAGE = 8;
+  const paginatedCategories = filteredCategories.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+  const totalPages = Math.ceil(filteredCategories.length / ITEMS_PER_PAGE);
+
 
       
       
@@ -309,6 +351,8 @@ export default function CategoriesPage() {
                 className="w-full border border-gray-300 px-3 py-2 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-[#960130]"
                 >
                 <option value="">-- Chọn loại --</option>
+                <option value="parent">Thêm mới loại danh mục gốc</option>
+
                 {categoryTypes.map((type) => (
                     <option key={type._id} value={type._id}>
                     {type.name}
@@ -370,7 +414,7 @@ export default function CategoriesPage() {
     item.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
   );
   const displayStatus = item.isActive ? 'Hoạt động' : 'Tạm ngưng';
-  const stt = index + 1 + (currentPage - 1) * ITEMS_PER_PAGE;
+const stt = index + 1 + (currentPage - 1) * ITEMS_PER_PAGE;
 
   return (
     <div

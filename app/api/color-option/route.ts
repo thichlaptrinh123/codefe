@@ -6,30 +6,48 @@ export async function GET() {
   await dbConnect();
   const colors = await ColorOption.find();
 
-  const result = colors.map((item) => ({
-    _id: item._id,
-    categoryType: item.categoryType,
-    values: item.colors, // 👈 FE expect field này là 'values'
-    isActive: item.isActive,
-  }));
-
-  return NextResponse.json(result);
+  return NextResponse.json(
+    colors.map((item) => ({
+      _id: item._id,
+      categoryType: item.categoryType,
+      values: item.colors,
+      isActive: item.isActive,
+    }))
+  );
 }
 
 export async function POST(req: Request) {
   await dbConnect();
-  const body = await req.json();
+  const { categoryType, values, isActive } = await req.json();
 
-  const created = await ColorOption.create({
-    categoryType: body.categoryType,
-    colors: body.values, // 👈 FE gửi 'values', map vào 'colors'
-    isActive: body.isActive,
-  });
+  const existing = await ColorOption.findOne({ categoryType });
+  let updatedDoc;
+
+  if (existing) {
+    const existingNames = new Set(
+      existing.colors.map((c) => c.name.toLowerCase())
+    );
+
+    const newColors = values.filter(
+      (c: { name: string }) => !existingNames.has(c.name.toLowerCase())
+    );
+
+    existing.colors.push(...newColors);
+    existing.isActive = isActive;
+    await existing.save();
+    updatedDoc = existing;
+  } else {
+    updatedDoc = await ColorOption.create({
+      categoryType,
+      colors: values,
+      isActive,
+    });
+  }
 
   return NextResponse.json({
-    _id: created._id,
-    categoryType: created.categoryType,
-    values: created.colors, // 👈 map lại 'colors' thành 'values'
-    isActive: created.isActive,
+    _id: updatedDoc._id,
+    categoryType: updatedDoc.categoryType,
+    values: updatedDoc.colors,
+    isActive: updatedDoc.isActive,
   });
 }

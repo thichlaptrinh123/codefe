@@ -23,28 +23,26 @@ export async function POST(req: NextRequest) {
   await dbConnect();
 
   try {
-    const body = await req.json();
+      // Sau khi lấy body:
+      const body = await req.json();
 
-    // Kiểm tra bắt buộc
-    if (!body.name || !body.id_category || !body.price) {
-      return NextResponse.json(
-        { message: "Vui lòng cung cấp đầy đủ: name, id_category, price" },
-        { status: 400 }
-      );
-    }
+      // 👉 Nếu bạn có truyền kèm id (để phân biệt create / edit)
+      const isEditing = !!body._id;
 
-    // Kiểm tra tên trùng
-    const existing = await Product.findOne({
-      name: { $regex: `^${body.name}$`, $options: "i" },
-    });
-    console.log("🔍 Đang kiểm tra trùng tên:", body.name);
-    
-    if (existing) {
-      return NextResponse.json(
-        { message: "Tên sản phẩm đã tồn tại" },
-        { status: 409 }
-      );
-    }
+      // ⚠️ Kiểm tra tên trùng CHỈ KHI tạo mới
+      if (!isEditing) {
+        const existing = await Product.findOne({
+          name: { $regex: `^${body.name}$`, $options: "i" },
+        });
+
+        if (existing) {
+          return NextResponse.json(
+            { message: "Tên sản phẩm đã tồn tại" },
+            { status: 409 }
+          );
+        }
+      }
+
 
     // Chuẩn hoá ảnh
     if (!Array.isArray(body.images)) {

@@ -15,10 +15,17 @@ export async function GET(req: NextRequest) {
     const filter: any = {};
     if (productId) filter.id_product = productId;
     if (categoryId) filter.id_category = categoryId;
-
     const variants = await Variant.find(filter).sort({ createdAt: -1 }).lean();
 
-    return NextResponse.json(variants);
+    const normalized = variants.map((v) => ({
+      ...v,
+      stock_quantity: Number(v.stock_quantity) || 0,
+      sold_quantity: Number(v.sold_quantity) || 0,
+      price: Number(v.price) || 0,
+    }));
+    
+    return NextResponse.json(normalized);
+    
   } catch (err) {
     return NextResponse.json(
       {

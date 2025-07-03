@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { RawProduct } from "@/app/admin/components/product/product-types"; // hoặc đường dẫn đúng với bạn
 import { isNewProduct } from "../../../lib/date-utils";
-
+import ProductDetailModal from "../components/product/product-detail-modal";
 import {
   productStatusClass,
   productStatusLabel,
@@ -24,6 +24,9 @@ export default function ProductPage() {
   const [status, setStatus] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [viewProductId, setViewProductId] = useState<string | null>(null);
+
 
   // const [categories, setCategories] = useState<{ _id: string; name: string }[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -35,7 +38,7 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
   // 🧩 Hàm lấy biến thể theo ID sản phẩm
   const fetchVariants = async (productId: string) => {
     try {
-      const res = await fetch(`/api/variant/${productId}`);
+      const res = await fetch(`/api/variant?productId=${productId}`);
       if (!res.ok) return [];
       const data = await res.json();
       return Array.isArray(data) ? data : [];
@@ -44,7 +47,7 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
       return [];
     }
   };
-
+  
   // ✅ Hàm lấy tất cả sản phẩm và xử lý đồng bộ category (dùng _id + name)
   const fetchProducts = async () => {
     try {
@@ -63,14 +66,6 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
             (sum, variant) => sum + Number(variant.stock_quantity || 0),
             0
           );
-          
-      
-          // 👉 Log để kiểm tra dữ liệu
-          console.log("🟡 Product:", product.name);
-          console.log("   🔹 ID:", product._id);
-          console.log("   🔸 Variants:", variants);
-          console.log("   🔸 Tồn kho tính được:", stock);
-      
           const featuredScore =
             (product.viewCount || 0) * 0.5 +
             variants.reduce((sum, v) => sum + (v.sold_quantity || 0), 0) * 2;
@@ -141,9 +136,14 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const displayStatus = getDisplayStatus(product);
-      const matchSearch = product.name
-        .toLowerCase()
-        .includes(search.toLowerCase());
+      const searchLower = search.toLowerCase();
+
+      const matchSearch =
+        product.name.toLowerCase().includes(searchLower) ||
+        product.categoryName.toLowerCase().includes(searchLower) ||
+        String(product.price).includes(searchLower) ||
+        String(product.stock).includes(searchLower);
+      
       const matchStatus = status === "all" || displayStatus === status;
       return matchSearch && matchStatus;
     });
@@ -235,10 +235,10 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
             className="grid grid-cols-[0.5fr_1fr_2fr_1.2fr_1fr_1fr_1fr_1fr] gap-4 px-2 py-3 items-center border-b border-gray-200"
           >          
               <div className="text-sm text-gray-700">{stt}</div>
-
-              {(product.images ?? []).filter((img) => img.trim() !== "").length > 0 ? (
+              
+              {product.images?.length && product.images.some((img) => img.trim() !== "") ? (
   <Image
-    src={(product.images ?? []).filter((img) => img.trim() !== "")[0]}
+    src={product.images.find((img) => img.trim() !== "")!}
     alt={product.name}
     width={80}
     height={80}
@@ -249,9 +249,13 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
     Không có ảnh
   </div>
 )}
+
               {/* <div className="text-sm text-gray-700">{product.name}</div> */}
-<div className="text-sm text-gray-700 flex flex-col">
-  <span className="truncate max-w-full">{product.name}</span>
+  <div className="text-sm text-gray-700 flex flex-col overflow-hidden break-words max-w-full">
+    <span className="whitespace-normal leading-snug">
+      {product.name}
+    </span>
+
   <div className="flex gap-1 mt-1">
     {product.isNew && (
       <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-medium">
@@ -268,12 +272,8 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
 
               <div className="text-sm text-gray-700">{product.categoryName}</div>
               <div className="text-sm text-gray-700">{formatPrice(product.price)}</div>
-              <div className="text-sm text-gray-700">
-  {console.log("📊 Render tồn kho sản phẩm:", product.name, "→", product.stock)}
-  {product.stock}
-</div>
+              <div className="text-sm text-gray-700">{product.stock}</div>
 
-       
               <div>
                 <span
                   className={clsx(
@@ -284,29 +284,44 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
                   {productStatusLabel[getDisplayStatus(product)]}
                 </span>
               </div>
-              <div className="text-center">
-              <button
-                className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
-                onClick={() => {
-                  setSelectedProduct({
-                    _id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    sale: product.discount,
-                    product_hot: product.featuredLevel,
-                    isActive: product.status === "active",
-                    description: product.description,
-                    id_category: product.category,
-                    variants: product.variants || [],
-                    images: product.images || [], 
-                    stock: product.stock,
-                  });
-                  setShowModal(true);
-                }}
-              >
-                <i className="bx bx-pencil text-lg" />
-              </button>
-              </div>
+              <div className="text-center flex justify-center gap-2">
+  {/* 👁 Nút xem chi tiết */}
+  <button
+    className="bg-blue-100 hover:bg-blue-200 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
+    onClick={() => {
+      setViewProductId(product.id);
+      setShowDetailModal(true);
+    }}
+    title="Xem chi tiết"
+  >
+    <i className="bx bx-show text-lg" />
+  </button>
+
+  {/* ✏ Nút chỉnh sửa */}
+  <button
+      className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
+    onClick={() => {
+      setSelectedProduct({
+        _id: product.id,
+        name: product.name,
+        price: product.price,
+        sale: product.discount,
+        product_hot: product.featuredLevel,
+        isActive: product.status === "active",
+        description: product.description,
+        id_category: product.category,
+        variants: product.variants || [],
+        images: product.images || [],
+        stock: product.stock,
+      });
+      setShowModal(true);
+    }}
+    title="Chỉnh sửa"
+  >
+    <i className="bx bx-pencil text-lg" />
+  </button>
+</div>
+
             </div>
           );
         })}
@@ -326,6 +341,13 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
   isEdit={!!selectedProduct}
   categoryList={categoryList}
 />
+
+<ProductDetailModal
+  isOpen={showDetailModal}
+  onClose={() => setShowDetailModal(false)}
+  productId={viewProductId}
+/>
+
 
 
     </section>

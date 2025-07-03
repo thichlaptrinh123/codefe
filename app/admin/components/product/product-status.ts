@@ -1,7 +1,7 @@
 export type ProductStatus = "active" | "inactive" | "low-stock" | "sold-out";
 
 export const productStatusLabel: Record<ProductStatus, string> = {
-  active: "Hiển thị",
+  active: "Hoạt động",
   inactive: "Tạm ngưng",
   "low-stock": "Gần hết hàng",
   "sold-out": "Hết hàng",
@@ -15,14 +15,14 @@ export const productStatusClass: Record<ProductStatus, string> = {
 };
 
 export const productStatusOptions: { label: string; value: ProductStatus }[] = [
-  { label: "Hiển thị", value: "active" },
+  { label: "Hoạt động", value: "active" },
   { label: "Tạm ngưng", value: "inactive" },
   { label: "Gần hết hàng", value: "low-stock" },
   { label: "Hết hàng", value: "sold-out" },
 ];
 
 export const productStatusManualOptions: { label: string; value: ProductStatus }[] = [
-    { label: "Hiển thị", value: "active" },
+    { label: "Hoạt động", value: "active" },
     { label: "Tạm ngưng", value: "inactive" },
   ];
   

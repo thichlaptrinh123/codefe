@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Table from "../components/shared/blog-table";
+import Table from "../components/blog/blog-table";
 import SearchInput from "../components/shared/search-input";
 import StatusFilter from "../components/shared/status-filter";
 import AddBlogModal from "../components/blog/blog-modal";

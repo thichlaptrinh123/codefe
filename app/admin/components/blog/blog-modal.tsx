@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 import { toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import ImageUploader from "../shared/constants/image-uploader";
+import ImageUploader from "../shared/image-uploader";
 
 
 const CKEditorClient = dynamic(() => import("../shared/CKEditorClient"), {

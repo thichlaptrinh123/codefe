@@ -6,11 +6,11 @@ import StatusFilter from "../components/shared/status-filter";
 import Pagination from "../components/shared/pagination";
 import OrderDetailModal from "../components/order/order-detail-modal";
 import clsx from "clsx";
-import { ORDER_STATUS, STATUS_STYLE } from "../components/shared/constants/order";
+import { ORDER_STATUS, STATUS_STYLE } from "../components/order/order";
 import dayjs from "dayjs";
-import PaymentMethodFilter from "../components/shared/payment-method-filter";
+import PaymentMethodFilter from "../components/order/payment-method-filter";
 import OrderStatusOverview from "../components/order/order-status-over-view";
-import TimeFilter from "../components/shared/time-filter";
+import TimeFilter from "../components/order/time-filter";
 
 const MOCK_ORDERS = [
   {

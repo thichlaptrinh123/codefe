@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { dbConnect } from '../../../../../lib/mongodb'
-import Wishlist from '../../../../../model/wishlist'
+import { dbConnect } from '../../../../lib/mongodb'
+import Wishlist from '../../../../model/wishlist'
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   await dbConnect();

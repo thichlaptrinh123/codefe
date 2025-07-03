@@ -81,7 +81,23 @@ export default function OptionManager() {
   };
 
   const handleSubmit = async () => {
+    if (!form.categoryType) {
+      toast.warning("Vui lòng chọn loại danh mục");
+      return;
+    }
+  
+    // ✅ Kiểm tra trùng categoryType nếu không phải đang edit
+    if (!editing) {
+      const isDuplicate = options.some((opt) => opt.categoryType === form.categoryType);
+      if (isDuplicate) {
+        toast.warning("Loại danh mục này đã có trong danh sách");
+        return;
+      }
+    }
+  
     let body;
+    // ---- xử lý tiếp như cũ ----
+  
   
     if (!form.categoryType) {
       toast.warning("Vui lòng chọn loại danh mục");
@@ -275,7 +291,7 @@ export default function OptionManager() {
             ) : (
               <input
                 type="text"
-                placeholder="VD: S, M, L, XL"
+                placeholder="Chọn size phù hợp"
                 value={form.values}
                 onChange={(e) => setForm({ ...form, values: e.target.value })}
                 className="w-full border px-3 py-2 rounded-md"

@@ -1,84 +1,65 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import SearchInput from "../components/shared/search-input";
 import StatusFilter from "../components/shared/status-filter";
 import Pagination from "../components/shared/pagination";
-import CommentTable from "../components/shared/comment-table";
+import CommentTable from "../components/comment/comment-table";
 import StarFilter from "../components/shared/star-filter";
 
-const dummyComments = [
-  {
-    id: "1",
-    product: "Áo thun nam",
-    image: "/images/1.webp",
-    user: "Nguyễn Văn A",
-    content: "Chất lượng tốt lắm!",
-    stars: 5,
-    createdAt: "2025-06-15T10:23:00Z",
-    status: "active",
-  },
-  {
-    id: "2",
-    product: "Quần jeans",
-    image: "/images/1.webp", 
-    user: "Trần Thị B",
-    content: "Vải hơi mỏng nhưng mặc vẫn ổn.",
-    stars: 3,
-    createdAt: "2025-06-14T14:45:00Z",
-    status: "inactive",
-  },
-  {
-    id: "3",
-    product: "Áo khoác hoodie",
-    image: "/images/1.webp",
-    user: "Phạm Văn C",
-    content: "Rất ấm và thoải mái!",
-    stars: 4,
-    createdAt: "2025-06-13T09:10:00Z",
-    status: "active",
-  },
-  {
-    id: "4",
-    product: "Giày sneaker",
-    image: "/images/1.webp",
-    user: "Ngô Thị D",
-    content: "Chất lượng tuyệt vời, đi rất êm!",
-    stars: 5,
-    createdAt: "2025-06-12T11:20:00Z",
-    status: "active",
-  },
-  {
-    id: "5",
-    product: "Balo thời trang",
-    image: "/images/1.webp",
-    user: "Lê Văn E",
-    content: "Nhiều ngăn, tiện lợi.",
-    stars: 4,
-    createdAt: "2025-06-11T16:05:00Z",
-    status: "inactive",
-  },
-  {
-    id: "6",
-    product: "Áo len cổ lọ",
-    image: "/images/1.webp",
-    user: "Hoàng Thị F",
-    content: "Hơi ngắn so với mô tả.",
-    stars: 2,
-    createdAt: "2025-06-10T08:40:00Z",
-    status: "active",
-  },
-];
-
+interface Comment {
+  id: string;
+  product: string;
+  image?: string;
+  user: string;
+  content: string;
+  stars: number;
+  createdAt: string;
+  status: "active" | "inactive";
+}
 
 export default function CommentsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "inactive">("all");
   const [filterStars, setFilterStars] = useState<"all" | 5 | 4 | 3 | 2 | 1>("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [comments, setComments] = useState(dummyComments);
+  const [comments, setComments] = useState<Comment[]>([]);
   const perPage = 5;
 
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const res = await fetch("/api/comment");
+  
+        if (!res.ok) {
+          const errText = await res.text();
+          throw new Error(`Lỗi API: ${res.status} - ${errText}`);
+        }
+  
+        const data = await res.json();
+  
+        const formatted = data.map((item: any) => ({
+          id: item._id,
+          product: item.id_product?.name || "(Không rõ sản phẩm)",
+          image: item.id_product?.images?.[0] || "",
+          user: item.id_user?.name || "Ẩn danh",
+          content: item.content || "",
+          stars: item.stars || 5,
+          createdAt: item.createdAt,
+          status: item.isActive ? "active" : "inactive",
+        }));
+  
+        setComments(formatted);
+      } catch (error) {
+        console.error("Lỗi khi fetch comment:", error);
+      }
+    };
+  
+    fetchComments();
+  }, []);
+  
+
+  // 📌 Bộ lọc
   const filteredComments = useMemo(() => {
     return comments
       .filter(
@@ -97,12 +78,30 @@ export default function CommentsPage() {
     return filteredComments.slice(start, start + perPage);
   }, [filteredComments, currentPage]);
 
-  const toggleStatus = (id: string) => {
-    setComments((prev) =>
-      prev.map((c) =>
-        c.id === id ? { ...c, status: c.status === "active" ? "inactive" : "active" } : c
-      )
-    );
+  // 🔁 Cập nhật trạng thái hiển thị
+  const toggleStatus = async (id: string) => {
+    const comment = comments.find((c) => c.id === id);
+    if (!comment) return;
+
+    const newStatus = comment.status === "active" ? false : true;
+
+    try {
+      await fetch(`/api/comment/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ isActive: newStatus }),
+      });
+
+      setComments((prev) =>
+        prev.map((c) =>
+          c.id === id ? { ...c, status: newStatus ? "active" : "inactive" } : c
+        )
+      );
+    } catch (err) {
+      console.error("Lỗi khi cập nhật trạng thái:", err);
+    }
   };
 
   return (
@@ -130,10 +129,7 @@ export default function CommentsPage() {
             ]}
           />
 
-          <StarFilter
-            value={filterStars}
-            onChange={(value) => setFilterStars(value)}
-          />
+          <StarFilter value={filterStars} onChange={(value) => setFilterStars(value)} />
         </div>
       </div>
 

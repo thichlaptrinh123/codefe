@@ -5,7 +5,7 @@ import React from "react";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
-import { ORDER_STATUS } from "../shared/constants/order";
+import { ORDER_STATUS } from "./order";
 
 const ORDER_FLOW = [
   "pending",

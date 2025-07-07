@@ -25,8 +25,8 @@ export default function CommentsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [comments, setComments] = useState<Comment[]>([]);
   const perPage = 5;
-  const [fromDate, setFromDate] = useState<string>(""); // ví dụ: "2025-06-01"
-const [toDate, setToDate] = useState<string>("");     // ví dụ: "2025-07-01"
+  const [fromDate, setFromDate] = useState<string>(""); 
+  const [toDate, setToDate] = useState<string>("");
 
 
   useEffect(() => {

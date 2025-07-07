@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { dbConnect } from "../../../../../lib/mongodb";
-import Collection from "../../../../../model/collection";
+import { dbConnect } from "../../../../lib/mongodb";
+import Collection from "../../../../model/collection";
 
 // Lấy chi tiết 1 collection theo ID
 export async function GET(

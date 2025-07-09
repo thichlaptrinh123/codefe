@@ -1,3 +1,4 @@
+// file: model/collection.ts
 import mongoose from "mongoose";
 
 const CollectionSchema = new mongoose.Schema({

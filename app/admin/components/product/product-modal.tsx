@@ -790,34 +790,70 @@ if (!isOpen) return null;
             </div>
           )}
 
-{/* Hình ảnh */}
-<div className="sm:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Hình ảnh sản phẩm</label>
-            <ImageUploader onFiles={onDrop} />
-  
-            {images.length > 0 && (
-  <div className="flex flex-wrap gap-4 mt-3">
-    {images.map((img, index) => {
-      // 👉 Nếu là UploadingImage
-      if (typeof img !== "string") {
-        const imageUrl = img.url || img.previewUrl;
-        const isUploading = !img.url && !img.error;
-        const isError = !!img.error;
+          {/* Hình ảnh */}
+          <div className="sm:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Hình ảnh sản phẩm</label>
+                    <ImageUploader onFiles={onDrop} />
+          
+                    {images.length > 0 && (
+          <div className="flex flex-wrap gap-4 mt-3">
+            {images.map((img, index) => {
+              // 👉 Nếu là UploadingImage
+              if (typeof img !== "string") {
+                const imageUrl = img.url || img.previewUrl;
+                const isUploading = !img.url && !img.error;
+                const isError = !!img.error;
 
+                return (
+                  <div
+                    key={index}
+                    className="relative w-28 h-28 rounded-md overflow-hidden border border-gray-200 shadow-sm group"
+                  >
+                    <Image
+                      src={imageUrl}
+                      alt={`Hình ảnh ${index + 1}`}
+                      width={112}
+                      height={112}
+                      className={clsx(
+                        "object-cover w-full h-full",
+                        isError && "opacity-40 grayscale"
+                      )}
+                      unoptimized
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="absolute top-1 right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition"
+                    >
+                      ×
+                    </button>
+
+                    {isUploading && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-xs font-medium">
+                        {img.progress || 0}%
+                      </div>
+                    )}
+                    {isError && (
+                      <div className="absolute inset-0 bg-red-500/60 text-white text-center text-xs flex items-center justify-center">
+                        Lỗi
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+        // 👉 Nếu là chuỗi (string) — ảnh cũ
         return (
           <div
             key={index}
             className="relative w-28 h-28 rounded-md overflow-hidden border border-gray-200 shadow-sm group"
           >
             <Image
-              src={imageUrl}
+              src={img}
               alt={`Hình ảnh ${index + 1}`}
               width={112}
               height={112}
-              className={clsx(
-                "object-cover w-full h-full",
-                isError && "opacity-40 grayscale"
-              )}
+              className="object-cover w-full h-full"
               unoptimized
             />
             <button
@@ -827,49 +863,12 @@ if (!isOpen) return null;
             >
               ×
             </button>
-
-            {isUploading && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-xs font-medium">
-                {img.progress || 0}%
-              </div>
-            )}
-            {isError && (
-              <div className="absolute inset-0 bg-red-500/60 text-white text-center text-xs flex items-center justify-center">
-                Lỗi
-              </div>
-            )}
           </div>
         );
-      }
-
-      // 👉 Nếu là chuỗi (string) — ảnh cũ
-      return (
-        <div
-          key={index}
-          className="relative w-28 h-28 rounded-md overflow-hidden border border-gray-200 shadow-sm group"
-        >
-          <Image
-            src={img}
-            alt={`Hình ảnh ${index + 1}`}
-            width={112}
-            height={112}
-            className="object-cover w-full h-full"
-            unoptimized
-          />
-          <button
-            type="button"
-            onClick={() => handleRemoveImage(index)}
-            className="absolute top-1 right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center shadow opacity-0 group-hover:opacity-100 transition"
-          >
-            ×
-          </button>
-        </div>
-      );
-    })}
-  </div>
-)}
-          </div>
-
+      })}
+    </div>
+  )}
+            </div>
 
         </div>
 

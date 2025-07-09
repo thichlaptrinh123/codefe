@@ -1,23 +1,14 @@
+// File: app/admin/components/blog/blog-table.tsx
 import Image from "next/image";
-import { format } from "date-fns";
+// import { format } from "date-fns";
 import clsx from "clsx";
 import React from "react";
 import dayjs from 'dayjs';
-
-type DataItem = {
-  id: number;
-  images: (string | File)[];
-  title: string;
-  description: string;
-  content: string;
-  date: string;
-  status: "published" | "draft" | "scheduled";
-  scheduledAt?: string | Date;
-};
+import type { Blog } from "./blog-types"; // hoặc điều chỉnh đường dẫn nếu nằm ở thư mục khác
 
 type Props = {
-  data: DataItem[];
-  onEdit?: (id: number) => void;
+  data: Blog[];         
+  onEdit?: (blog: Blog) => void;
 };
 
 export default function Table({ data, onEdit }: Props) {
@@ -68,31 +59,45 @@ export default function Table({ data, onEdit }: Props) {
             {/* STT */}
             <div className="text-sm text-gray-700">{index + 1}</div>
           
-            {/* Hình ảnh */}
-            <div className="flex gap-2 overflow-x-auto max-w-[80px]">
-              {(item.images || []).map((img, idx) => {
-                const url = typeof img === "string" ? img : URL.createObjectURL(img);
-                return (
-                  <Image
-                    key={idx}
-                    src={url}
-                    alt={`Ảnh ${idx + 1}`}
-                    width={48}
-                    height={48}
-                    className="w-12 h-12 object-cover rounded"
-                  />
-                );
-              })}
-            </div>
-          
-            {/* Tiêu đề */}
-            <div className="text-sm text-gray-800 font-medium line-clamp-2">{item.title}</div>
-          
-            {/* Mô tả */}
-            <div className="text-sm text-gray-600 line-clamp-2">{item.description}</div>
-          
-            {/* Nội dung */}
-            <div className="text-sm text-gray-600 line-clamp-2">{item.content}</div>
+          {/* Hình ảnh */}
+          <div className="flex justify-center items-center min-w-[100px] max-w-[100px] h-[100px]">
+            {item.images?.[0] ? (
+              <div className="w-[88px] h-[88px] rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                <Image
+                  src={
+                    typeof item.images[0] === "string"
+                      ? item.images[0]
+                      : URL.createObjectURL(item.images[0])
+                  }
+                  alt="Ảnh bài viết"
+                  width={88}
+                  height={88}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            ) : (
+              <div className="w-[88px] h-[88px] rounded-xl border border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-xs text-center p-2">
+                Không có ảnh
+              </div>
+            )}
+          </div>
+
+
+           {/* Tiêu đề */}
+          <div className="text-sm text-gray-800 font-medium max-w-[200px] line-clamp-1 break-words">
+            {item.title}
+          </div>
+
+          {/* Mô tả */}
+          <div className="text-sm text-gray-600 max-w-[250px] line-clamp-2 break-words">
+            {item.description}
+          </div>
+
+          {/* Nội dung */}
+          <div className="text-sm text-gray-600 max-w-[250px] line-clamp-2 break-words">
+            {item.content}
+          </div>
+
           
             {/* Ngày */}
             <div className="text-sm text-gray-600">
@@ -109,7 +114,7 @@ export default function Table({ data, onEdit }: Props) {
             <div className="text-center">
               <button
                 className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
-                onClick={() => onEdit?.(item.id)}
+                onClick={() => onEdit?.(item)}
                 title="Sửa bài viết"
               >
                 <i className="bx bx-pencil text-lg" />

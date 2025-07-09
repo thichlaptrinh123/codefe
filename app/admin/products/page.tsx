@@ -236,19 +236,21 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
           >          
               <div className="text-sm text-gray-700">{stt}</div>
               
-              {product.images?.length && product.images.some((img) => img.trim() !== "") ? (
-  <Image
-    src={product.images.find((img) => img.trim() !== "")!}
-    alt={product.name}
-    width={80}
-    height={80}
-    className="object-cover rounded"
-  />
-) : (
-  <div className="w-20 h-20 bg-gray-100 border border-gray-300 flex items-center justify-center text-xs text-gray-500">
-    Không có ảnh
-  </div>
-)}
+              {product.images?.length && product.images.some((img) => img?.trim() !== "") ? (
+              <div className="w-[88px] h-[88px] rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                <Image
+                  src={product.images.find((img) => img?.trim() !== "")!}
+                  alt={product.name}
+                  width={88}
+                  height={88}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            ) : (
+              <div className="w-[88px] h-[88px] rounded-xl border border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-xs text-center p-2">
+                Không có ảnh
+              </div>
+            )}
 
               {/* <div className="text-sm text-gray-700">{product.name}</div> */}
   <div className="text-sm text-gray-700 flex flex-col overflow-hidden break-words max-w-full">

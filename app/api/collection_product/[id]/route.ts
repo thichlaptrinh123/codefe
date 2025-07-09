@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { dbConnect } from "../../../../../lib/mongodb";
-import Collection_product from "../../../../../model/collection_product";
+import { dbConnect } from "../../../../lib/mongodb";
+import Collection_product from "../../../../model/collection_product";
 
 // GET: Lấy danh sách sản phẩm theo id_collection
 export async function GET(

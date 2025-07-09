@@ -1,9 +1,11 @@
+// File: app/admin/users/page.tsx
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
 import SearchInput from "../components/shared/search-input";
 import Pagination from "../components/shared/pagination";
 import StatusFilter from "../components/shared/status-filter";
+import RoleFilter from "../components/user/role-filter";
 import UserModal from "../components/user/user-modal";
 import clsx from "clsx";
 import { User } from "../components/user/user-types";
@@ -19,6 +21,7 @@ export default function UserPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [roleFilter, setRoleFilter] = useState("all");
 
   const fetchUsers = async () => {
     try {
@@ -82,10 +85,12 @@ export default function UserPage() {
         user.role?.toLowerCase().includes(searchLower);
   
       const matchStatus = status === "all" || user.status === status;
+      const matchRole = roleFilter === "all" || user.role === roleFilter;
   
-      return matchSearch && matchStatus;
+      return matchSearch && matchStatus && matchRole;
     });
-  }, [users, search, status]);
+  }, [users, search, status, roleFilter]);
+  
   
   const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
 
@@ -116,6 +121,10 @@ export default function UserPage() {
               { label: "Tạm ngưng", value: "inactive" },
             ]}
           />
+            <RoleFilter
+              value={roleFilter}
+              onChange={setRoleFilter}
+            />
             </div>
           </div>
       

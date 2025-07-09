@@ -1,6 +1,8 @@
+// File: app/api/blog/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "../../../lib/mongodb";
 import Blog from "../../../model/blogs";
+import "../../../model/user";
 
 // GET: Lấy danh sách blog (có thể lọc ẩn/hiện)
 export async function GET(req: NextRequest) {
@@ -16,12 +18,30 @@ export async function GET(req: NextRequest) {
       .populate("id_user", "name email _id")
       .sort({ created_at: -1 });
 
-    return NextResponse.json(blogs, { status: 200 });
+    const now = new Date();
+
+    const blogsWithStatus = blogs.map((item) => {
+      let status: "published" | "draft" | "scheduled" = "published";
+
+      if (item.isHidden) {
+        status = "draft";
+      } else if (item.isScheduled && item.scheduled_at && new Date(item.scheduled_at) > now) {
+        status = "scheduled";
+      }
+
+      return {
+        ...item.toObject(), // chuyển về object thuần
+        status, // 👈 Gắn thêm trường status
+      };
+    });
+
+    return NextResponse.json(blogsWithStatus, { status: 200 });
   } catch (error) {
     console.error("Lỗi server API blog:", error);
     return NextResponse.json({ message: "Lỗi server" }, { status: 500 });
   }
 }
+
 
 // POST: Tạo mới blog
 export async function POST(req: NextRequest) {
@@ -48,7 +68,7 @@ export async function POST(req: NextRequest) {
       isScheduled: data.isScheduled ?? false,
       scheduled_at: data.scheduled_at || null,
     });
-
+ 
     return NextResponse.json(newBlog, { status: 201 });
   } catch (error) {
     console.error("Lỗi tạo blog:", error);

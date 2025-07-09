@@ -17,6 +17,7 @@ const sidebarItems = [
   { label: "Người dùng", icon: "bx-user", href: "/admin/users" },
   { label: "Khuyến mãi", icon: "bx-gift", href: "/admin/promotions" },
   { label: "Bài viết", icon: "bx-notepad", href: "/admin/blogs", active: true },
+  { label: "Bộ sưu tập", icon: "bx-collection", href: "/admin/collections" },
   { label: "Phản hồi", icon: "bx-message-rounded", href: "/admin/comments" },
  
 ];

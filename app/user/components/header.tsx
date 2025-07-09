@@ -1,6 +1,6 @@
 'use client';
-import { Heart, Search, ShoppingCart, User } from "lucide-react";
-import "../css_user/header.css";
+import { ChevronDown, Heart, Menu, Search, ShoppingCart, User } from "lucide-react";
+import "../css_user/header.css"; // Adjust the path as necessary
 const Header = () => {
   return (
     <header className="header">
@@ -45,24 +45,155 @@ const Header = () => {
       </div>
 
       {/* Navigation Menu */}
-      <nav className="navigation">
-        <div className="nav-container">
-          <div className="nav-item">BỘ SƯU TẬP</div>
-          <div className="nav-item">ÁO THUN NAM | NỮ</div>
-          <div className="nav-item promotion">KHUYẾN MÃI - GIẢM GIÁ</div>
-          <div className="nav-item">PHỤ KIỆN THỜI TRANG</div>
-          <div className="nav-item trend">XU HƯỚNG MỚI</div>
+      <nav className="nav-menu">
+  <ul className="menu-ul">
+    <li className="menu-li menu-dropdown">
+      <a href="#">Bộ sưu tập</a>
+      <div className="side-menu2">
+        <div className="menu-content">
+          <div className="menu-column">
+            <h3>Bộ Sưu Tập</h3>
+            <ul>
+              <li>Giấc Mơ Màu Pastel</li>
+              <li>Nhịp Đập Mùa Nắng</li>
+              <li>Sắc Thu Nhẹ Nhàng</li>
+              <li>Sương Trắng &amp; Phong Cách</li>
+            </ul>
+          </div>
+          <div className="menu-column">
+            <h3>Áo</h3>
+            <ul>
+              <li>Áo Thun</li>
+              <li>Áo Polo</li>
+              <li>Áo Sơ Mi</li>
+              <li>Áo Khoác</li>
+            </ul>
+          </div>
+          <div className="menu-column">
+            <h3>Quần</h3>
+            <ul>
+              <li>Quần Jeans</li>
+              <li>Quần Tây</li>
+              <li>Quần KAKI</li>
+              <li>Quần Shorts</li>
+            </ul>
+          </div>
+          <div className="menu-column">
+            <h3>Phụ Kiện</h3>
+            <ul>
+              <li>Balo</li>
+              <li>Túi Xách</li>
+              <li>Ví</li>
+              <li>Nón</li>
+            </ul>
+          </div>
+          <div className="menu-image">
+            <img src="../image/image-menu.png" alt="Fashion Models" />
+          </div>
         </div>
-      </nav>
-      {/* top header */}
-      <section className="content-header">
-        <div className="notice-slider">
-          <div className="notice-item">🛡️ Đổi trả miễn phí trong 7 ngày</div>
-          <div className="notice-item">🚚 Miễn phí giao hàng toàn quốc</div>
-          <div className="notice-item">🎁 Tặng quà cho đơn hàng từ 500K</div>
-          <div className="notice-item">📞 Hỗ trợ 24/7</div>
+      </div>
+    </li>
+    <li className="menu-li menu-dropdown">
+      <a href="#">Áo thun nam | nữ</a>
+      <div className="side-menu3">
+        <div className="menu-content">
+          <div className="menu-column">
+            <h3>Bộ Sưu Tập</h3>
+            <ul>
+              <li>Giấc Mơ Màu Pastel</li>
+              <li>Nhịp Đập Mùa Nắng</li>
+              <li>Sắc Thu Nhẹ Nhàng</li>
+              <li>Sương Trắng &amp; Phong Cách</li>
+            </ul>
+          </div>
+          <div className="menu-column">
+            <h3>Áo</h3>
+            <ul>
+              <li>Áo Thun</li>
+              <li>Áo Polo</li>
+              <li>Áo Sơ Mi</li>
+              <li>Áo Khoác</li>
+            </ul>
+          </div>
+          <div className="menu-column">
+            <h3>Quần</h3>
+            <ul>
+              <li>Quần Jeans</li>
+              <li>Quần Tây</li>
+              <li>Quần KAKI</li>
+              <li>Quần Shorts</li>
+            </ul>
+          </div>
+          <div className="menu-column">
+            <h3>Phụ Kiện</h3>
+            <ul>
+              <li>Balo</li>
+              <li>Túi Xách</li>
+              <li>Ví</li>
+              <li>Nón</li>
+            </ul>
+          </div>
+          <div className="menu-image">
+            <img src="../image/image-menu.png" alt="Fashion Models" />
+          </div>
         </div>
-      </section>
+      </div>
+    </li>
+    <li className="menu-li">
+      <a href="#">Khuyến mãi - Giảm giá</a>
+    </li>
+    <li className="menu-li menu-dropdown">
+      <a href="#">Phụ kiện thời trang</a>
+      <div className="side-menu">
+        <div className="menu-content">
+          <div className="menu-column">
+            <h3>Bộ Sưu Tập</h3>
+            <ul>
+              <li>Giấc Mơ Màu Pastel</li>
+              <li>Nhịp Đập Mùa Nắng</li>
+              <li>Sắc Thu Nhẹ Nhàng</li>
+              <li>Sương Trắng &amp; Phong Cách</li>
+            </ul>
+          </div>
+          <div className="menu-column">
+            <h3>Áo</h3>
+            <ul>
+              <li>Áo Thun</li>
+              <li>Áo Polo</li>
+              <li>Áo Sơ Mi</li>
+              <li>Áo Khoác</li>
+            </ul>
+          </div>
+          <div className="menu-column">
+            <h3>Quần</h3>
+            <ul>
+              <li>Quần Jeans</li>
+              <li>Quần Tây</li>
+              <li>Quần KAKI</li>
+              <li>Quần Shorts</li>
+            </ul>
+          </div>
+          <div className="menu-column">
+            <h3>Phụ Kiện</h3>
+            <ul>
+              <li>Balo</li>
+              <li>Túi Xách</li>
+              <li>Ví</li>
+              <li>Nón</li>
+            </ul>
+          </div>
+          <div className="menu-image">
+            <img src="../image/image-menu.png" alt="Fashion Models" />
+          </div>
+        </div>
+      </div>
+    </li>
+    <li className="menu-li">
+      <a href="#">Xu hướng mới</a>
+    </li>
+  </ul>
+</nav>
+
     </header>
   );
 };

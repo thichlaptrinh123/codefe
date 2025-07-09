@@ -1,3 +1,4 @@
+// File: lib/uploadToCloudinary.ts
 import Swal from "sweetalert2";
 
 export const uploadToCloudinary = (

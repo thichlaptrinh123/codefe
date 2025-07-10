@@ -23,8 +23,6 @@ import {
   Color,
 } from "./product-types";
 
-
-
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 

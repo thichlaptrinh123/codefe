@@ -1,4 +1,4 @@
-// models/OrderDetail.ts
+// models/order-detail.ts
 import mongoose from "mongoose";
 
 const OrderDetailSchema = new mongoose.Schema(

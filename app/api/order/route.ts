@@ -3,7 +3,10 @@ import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/mongodb";
 import Order from "@/model/order";
 import OrderDetail from "@/model/order-detail";
-import User from "@/model/user"; // cần fetch thông tin người dùng
+import User from "@/model/user";
+import "@/model/user";
+import "@/model/variants";
+import "@/model/products";
 
 export async function POST(req: Request) {
   await dbConnect();
@@ -15,6 +18,8 @@ export async function POST(req: Request) {
       id_voucher,
       shipping_fee,
       products, // [{ id_variant, quantity, price }]
+      paymentMethod = "COD", // ✅ default
+      address = "",
     } = body;
 
     // Tính tổng tiền
@@ -40,6 +45,9 @@ export async function POST(req: Request) {
       id_user,
       id_voucher,
       shipping_fee,
+      paymentMethod,
+      address,
+      discount,
       status: "pending",
     });
 
@@ -96,6 +104,7 @@ export async function GET() {
 
         return {
           id: order._id.toString().slice(-6).toUpperCase(),
+          _id: order._id,
           customerName: user?.username || "Ẩn danh",
           phone: user?.phone || "Không có",
           createdAt: order.createdAt,

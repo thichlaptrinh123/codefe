@@ -524,8 +524,6 @@ export default function VariantsSection({
     </div>
   )}
 </div>
-
-      
     </div>
   );
 }

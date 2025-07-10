@@ -7,8 +7,8 @@ import Pagination from "../components/shared/pagination";
 import ProductModal from "../components/product/product-modal";
 import clsx from "clsx";
 import Image from "next/image";
-import Swal from "sweetalert2";
-import { toast } from "react-toastify";
+// import Swal from "sweetalert2";
+// import { toast } from "react-toastify";
 import { RawProduct } from "@/app/admin/components/product/product-types"; // hoặc đường dẫn đúng với bạn
 import { isNewProduct } from "../../../lib/date-utils";
 import ProductDetailModal from "../components/product/product-detail-modal";

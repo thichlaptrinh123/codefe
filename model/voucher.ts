@@ -32,7 +32,7 @@ const VoucherSchema = new mongoose.Schema(
     },
     status: {
       type: Boolean,
-      default: true, // true: còn hiệu lực, false: đã tắt
+      default: true, 
     },
     discount_percent: {
       type: Number,

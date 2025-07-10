@@ -52,8 +52,8 @@ export async function POST(req: Request) {
       );
     }
 
-    console.log("ROLE GỬI TỪ CLIENT:", role);               // 🧪
-    console.log("ROLE SAU CONVERT:", convertRoleToDb(role)); // 🧪
+    console.log("ROLE GỬI TỪ CLIENT:", role);             
+    console.log("ROLE SAU CONVERT:", convertRoleToDb(role));
 
 
     if (!password || !password.trim()) {
@@ -74,10 +74,7 @@ export async function POST(req: Request) {
       role: convertRoleToDb(role), 
       status: status === "active" ? 1 : 0,
     });
-
-    console.log("BODY GỬI:", body);
-console.log("PASSWORD:", password);
-
+    
     return NextResponse.json({ success: true, user: newUser });
   } catch (error: any) {
     return NextResponse.json(

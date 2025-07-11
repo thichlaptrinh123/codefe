@@ -1,3 +1,4 @@
+// app/admin/components/product/product-type.ts
 export interface ProductVariant {
   id?: number | string;
   size: string;

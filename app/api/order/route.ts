@@ -108,6 +108,7 @@ export async function GET() {
           customerName: user?.username || "Ẩn danh",
           phone: user?.phone || "Không có",
           createdAt: order.createdAt,
+          updatedAt: order.updatedAt,
           status: order.status,
           paymentMethod: order.paymentMethod || "COD",
           shippingFee: order.shipping_fee,

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="#">Trang chủ</a> / Giỏ hàng
+            </div>
+            <a href="#" class="back-btn">Quay về</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="cart-title">Giỏ hàng của bạn hiện có: <span style="color: #d32f2f;">3 sản phẩm</span></div>
+        
+        <div class="cart-content">
+            <div class="cart-items">
+                <div class="cart-header">
+                    <div>Sản Phẩm</div>
+                    <div>Số Lượng</div>
+                    <div>Giá</div>
+                    <div>Thành Tiền</div>
+                </div>
+
+                <div class="cart-item">
+                    <div class="product-info">
+                        <div class="product-image"></div>
+                        <div class="product-details">
+                            <h4>Áo thun tron</h4>
+                            <p>Màu sắc: ⚫</p>
+                            <p>Size: M</p>
+                            <button class="delete-btn">🗑️ Xoá</button>
+                        </div>
+                    </div>
+                    <div class="quantity-control">
+                        <button class="qty-btn" onclick="decreaseQty(this)">-</button>
+                        <input type="text" class="qty-input" value="1" onchange="updateTotal()">
+                        <button class="qty-btn" onclick="increaseQty(this)">+</button>
+                    </div>
+                    <div class="price">245.000VNĐ</div>
+                    <div class="price item-total">245.000VNĐ</div>
+                </div>
+
+                <div class="cart-item">
+                    <div class="product-info">
+                        <div class="product-image"></div>
+                        <div class="product-details">
+                            <h4>Áo thun tron</h4>
+                            <p>Màu sắc: ⚫</p>
+                            <p>Size: M</p>
+                            <button class="delete-btn">🗑️ Xoá</button>
+                        </div>
+                    </div>
+                    <div class="quantity-control">
+                        <button class="qty-btn" onclick="decreaseQty(this)">-</button>
+                        <input type="text" class="qty-input" value="1" onchange="updateTotal()">
+                        <button class="qty-btn" onclick="increaseQty(this)">+</button>
+                    </div>
+                    <div class="price">245.000VNĐ</div>
+                    <div class="price item-total">245.000VNĐ</div>
+                </div>
+
+                <div class="cart-item">
+                    <div class="product-info">
+                        <div class="product-image"></div>
+                        <div class="product-details">
+                            <h4>Áo thun tron</h4>
+                            <p>Màu sắc: ⚫</p>
+                            <p>Size: M</p>
+                            <button class="delete-btn">🗑️ Xoá</button>
+                        </div>
+                    </div>
+                    <div class="quantity-control">
+                        <button class="qty-btn" onclick="decreaseQty(this)">-</button>
+                        <input type="text" class="qty-input" value="1" onchange="updateTotal()">
+                        <button class="qty-btn" onclick="increaseQty(this)">+</button>
+                    </div>
+                    <div class="price">245.000VNĐ</div>
+                    <div class="price item-total">245.000VNĐ</div>
+                </div>
+            </div>
+
+            <div class="cart-summary">
+                <div class="summary-title">Tóm tắt đơn hàng</div>
+                
+                <div class="summary-row">
+                    <span>Tổng sản phẩm:</span>
+                    <span id="total-items">3</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span>Tổng sản phẩm:</span>
+                    <span id="subtotal">735.000VNĐ</span>
+                </div>
+                
+                <div class="summary-row">
+                    <span>Phí vận chuyển:</span>
+                    <span>30.000VNĐ</span>
+                </div>
+                
+                <div class="summary-total">
+                    <span>Tổng cộng</span>
+                    <span id="total">765.000VNĐ</span>
+                </div>
+
+                <div class="promo-code">
+                    <div class="promo-input">
+                        <input type="text" placeholder="Nhập mã giảm giá (nếu có)">
+                        <button>Áp dụng</button>
+                    </div>
+                </div>
+
+                <button class="checkout-btn">Tiến hành đặt hàng</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function increaseQty(btn) {
+            const input = btn.parentElement.querySelector('.qty-input');
+            input.value = parseInt(input.value) + 1;
+            updateItemTotal(btn);
+            updateTotal();
+        }
+
+        function decreaseQty(btn) {
+            const input = btn.parentElement.querySelector('.qty-input');
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+                updateItemTotal(btn);
+                updateTotal();
+            }
+        }
+
+        function updateItemTotal(btn) {
+            const row = btn.closest('.cart-item');
+            const qty = parseInt(row.querySelector('.qty-input').value);
+            const price = 245000;
+            const totalCell = row.querySelector('.item-total');
+            totalCell.textContent = (price * qty).toLocaleString('vi-VN') + 'VNĐ';
+        }
+
+        function updateTotal() {
+            let totalItems = 0;
+            let subtotal = 0;
+            
+            document.querySelectorAll('.cart-item').forEach(item => {
+                const qty = parseInt(item.querySelector('.qty-input').value);
+                const price = 245000;
+                totalItems += qty;
+                subtotal += price * qty;
+            });
+
+            const shipping = 30000;
+            const total = subtotal + shipping;
+
+            document.getElementById('total-items').textContent = totalItems;
+            document.getElementById('subtotal').textContent = subtotal.toLocaleString('vi-VN') + 'VNĐ';
+            document.getElementById('total').textContent = total.toLocaleString('vi-VN') + 'VNĐ';
+        }
+
+        // Xử lý nút xóa
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.cart-item').remove();
+                updateTotal();
+                
+                // Cập nhật số lượng sản phẩm trong tiêu đề
+                const remainingItems = document.querySelectorAll('.cart-item').length;
+                document.querySelector('.cart-title span').textContent = remainingItems + ' sản phẩm';
+            });
+        });
+    </script>
+</body>
+</html>

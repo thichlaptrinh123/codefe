@@ -4,12 +4,65 @@ import { dbConnect } from "@/lib/mongodb";
 import User from "@/model/user";
 import bcrypt from "bcryptjs";
 import { convertRoleToDb } from "@/app/admin/components/user/role-utils";
-  
-// Lấy danh sách user
+import "@/model/order";
+
+// // Lấy danh sách user
+// export async function GET() {
+//   await dbConnect();
+//   try {
+//     const users = await User.find().sort({ createdAt: -1 });
+
+//     const formatted = users.map((u) => ({
+//       _id: u._id,
+//       name: u.username,
+//       email: u.email || "",
+//       phone: u.phone,
+//       address: u.address || "",
+//       role: u.role,
+//       status: u.status === 1 ? "active" : "inactive",
+//     }));
+
+//     return NextResponse.json(formatted);
+//   } catch (error) {
+//     console.error("Lỗi khi lấy user:", error);
+//     return NextResponse.json(
+//       { message: "Lỗi khi lấy danh sách user", error },
+//       { status: 500 }
+//     );
+//   }
+// }
+
 export async function GET() {
   await dbConnect();
   try {
-    const users = await User.find().sort({ createdAt: -1 });
+    const users = await User.aggregate([
+      {
+        $lookup: {
+          from: "orders", // tên collection (đúng với MongoDB, thường là "orders")
+          localField: "_id",
+          foreignField: "id_user", // hoặc "customerId" tuỳ DB bạn
+          as: "orders",
+        },
+      },
+      {
+        $addFields: {
+          orderCount: { $size: "$orders" },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          username: 1,
+          email: 1,
+          phone: 1,
+          address: 1,
+          role: 1,
+          status: 1,
+          orderCount: 1,
+        },
+      },
+      { $sort: { createdAt: -1 } },
+    ]);
 
     const formatted = users.map((u) => ({
       _id: u._id,
@@ -19,6 +72,7 @@ export async function GET() {
       address: u.address || "",
       role: u.role,
       status: u.status === 1 ? "active" : "inactive",
+      orderCount: u.orderCount || 0,
     }));
 
     return NextResponse.json(formatted);
@@ -30,6 +84,7 @@ export async function GET() {
     );
   }
 }
+
 
 // Tạo mới user
 export async function POST(req: Request) {

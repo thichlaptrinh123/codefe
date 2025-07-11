@@ -10,6 +10,7 @@ export interface User {
     role: "super-admin" | "product-manager" | "order-manager" | "post-manager" | "customer";
     status: "active" | "inactive";
     address: string;
+    orderCount?: number; 
   }
   
   export interface UserModalProps {

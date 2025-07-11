@@ -37,17 +37,20 @@ export default function OrdersPage() {
   
         const formatted = data.map((order: any) => {
           return {
+            _id: order._id,
             id: order.id || order._id?.slice(-6).toUpperCase(), // ID đơn hàng
             customerName: order.customerName || "Ẩn danh",       // ✅ Lấy từ API đã format
             phone: order.phone || "Không có",
             createdAt: order.createdAt,
+            updatedAt: order.updatedAt,                          // ✅ Lấy từ API
             status: order.status,
             total: order.total,                                  // ✅ API đã tính sẵn
             paymentMethod: order.paymentMethod || "COD",
             shippingFee: order.shippingFee,
             discount: order.discount,
             address: order.address || "Chưa có địa chỉ",
-            products: order.products || [],                      // ✅ Lấy từ API
+            products: order.products || [],         
+                         // ✅ Lấy từ API
           };
         });
   
@@ -62,17 +65,43 @@ export default function OrdersPage() {
   
   
   
-  const handleUpdateStatus = (orderId: string, newStatus: string) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
-    );
-
-    if (selectedOrder?.id === orderId) {
-      setSelectedOrder((prev) => prev && { ...prev, status: newStatus });
+  const handleUpdateStatus = async (orderId: string, newStatus: string) => {
+    try {
+      // Gọi PATCH cập nhật trạng thái
+      const patchRes = await fetch(`/api/order/${orderId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+  
+      const patchData = await patchRes.json();
+  
+      if (!patchRes.ok || !patchData.data) {
+        console.error("Cập nhật thất bại:", patchData);
+        return;
+      }
+  
+      const updatedAt = patchData.data.updatedAt;
+  
+      // Cập nhật vào danh sách đơn hàng
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === orderId ? { ...order, status: newStatus, updatedAt } : order
+        )
+      );
+      
+  
+      // Cập nhật vào modal nếu đang mở
+      if (selectedOrder?.id === orderId) {
+        setSelectedOrder((prev) =>
+          prev ? { ...prev, status: newStatus, updatedAt } : prev
+        );
+      }
+    } catch (error) {
+      console.error("Lỗi cập nhật trạng thái:", error);
     }
   };
+  
 
   const filteredOrders = useMemo(() => {
     return orders.filter((order) => {
@@ -150,12 +179,11 @@ export default function OrdersPage() {
       <OrderStatusOverview data={statusSummary} />
 
     {/* Danh sách đơn hàng */}
-{/* Danh sách đơn hàng dạng giống Blog */}
 <div className="bg-white rounded-md shadow-[0_4px_12px_rgba(0,0,0,0.1)] p-4 space-y-4">
   <h1 className="text-lg font-semibold mb-4">Danh sách đơn hàng</h1>
 
   {/* Tiêu đề cột */}
-  <div className="hidden lg:grid grid-cols-[40px_110px_1.5fr_1.5fr_1fr_1fr_1fr_1fr_0.5fr] gap-2 px-2 py-3 bg-[#F9F9F9] rounded-md font-semibold text-gray-800 text-sm">
+  <div className="hidden lg:grid grid-cols-[40px_110px_1.2fr_1.2fr_1fr_1fr_1fr_1fr_0.5fr] gap-2 px-2 py-3 bg-[#F9F9F9] rounded-md font-semibold text-gray-800 text-sm">
     <div>STT</div>
     <div>Mã đơn</div>
     <div>Khách hàng</div>
@@ -171,7 +199,7 @@ export default function OrdersPage() {
   {paginatedOrders.map((order, index) => (
     <div
       key={order.id}
-      className="hidden lg:grid grid-cols-[40px_110px_1.5fr_1.5fr_1fr_1fr_1fr_1fr_0.5fr] gap-2 px-2 py-3 items-center border-b border-gray-200 text-sm text-gray-700"
+      className="hidden lg:grid grid-cols-[40px_110px_1.2fr_1.2fr_1fr_1fr_1fr_1fr_0.5fr] gap-2 px-2 py-3 items-center border-b border-gray-200 text-sm text-gray-700"
     >
       {/* STT */}
       <div>{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</div>
@@ -218,7 +246,7 @@ export default function OrdersPage() {
       {/* Thao tác */}
       <div className="text-center">
         <button
-          className="bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md text-sm"
+          className="bg-blue-100 hover:bg-blue-200 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
           onClick={() => setSelectedOrder(order)}
         >
           <i className="bx bx-show text-lg" />
@@ -260,8 +288,9 @@ export default function OrdersPage() {
         <div className="text-sm font-semibold text-[#960130]">
           Tổng: {order.total.toLocaleString("vi-VN")} VNĐ
         </div>
+        
         <button
-          className="bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md text-sm"
+          className="bg-blue-100 hover:bg-blue-200 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
           onClick={() => setSelectedOrder(order)}
         >
           <i className="bx bx-show text-lg" />

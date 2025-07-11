@@ -12,7 +12,7 @@ const VariantSchema = new mongoose.Schema(
     id_category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true, // nếu bạn muốn bắt buộc
+      required: true,
     },    
     size: { type: String },
     color: { type: String },

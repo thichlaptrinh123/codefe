@@ -11,7 +11,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     const updatedOrder = await Order.findByIdAndUpdate(
       params.id,
-      { status },
+      {
+        status,
+        updatedAt: new Date(), 
+      },
       { new: true }
     );
 
@@ -20,6 +23,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 
     return NextResponse.json({ success: true, data: updatedOrder });
+
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }

@@ -216,24 +216,25 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
       <div className="bg-white rounded-md shadow p-4 space-y-4">
         <h1 className="text-lg font-semibold mb-4">Danh sách sản phẩm</h1>
 
-        <div className="hidden lg:grid grid-cols-[0.5fr_1fr_2fr_1.2fr_1fr_1fr_1fr_1fr] gap-4 px-2 py-3 bg-[#F9F9F9] rounded-md font-semibold text-gray-800 text-sm">
-          <div>Stt</div>
-          <div>Hình ảnh</div>
-          <div>Tên sản phẩm</div>
-          <div>Danh mục</div>
-          <div>Giá</div>
-          <div>Tồn kho</div>
-          <div>Trạng thái</div>
-          <div className="text-center">Thao tác</div>
-        </div>
+        <div className="hidden md:grid grid-cols-[0.5fr_1fr_2fr_1.2fr_1fr_1fr_1fr_1fr] gap-4 px-2 py-3 bg-[#F9F9F9] rounded-md font-semibold text-gray-800 text-sm">
+        <div>Stt</div>
+        <div>Hình ảnh</div>
+        <div>Tên sản phẩm</div>
+        <div>Danh mục</div>
+        <div>Giá</div>
+        <div>Tồn kho</div>
+        <div>Trạng thái</div>
+        <div className="text-center">Thao tác</div>
+      </div>
+
 
         {paginatedProducts.map((product, index) => {
           const stt = (currentPage - 1) * ITEMS_PER_PAGE + index + 1;
           return (
             <div
             key={product.id}
-            className="grid grid-cols-[0.5fr_1fr_2fr_1.2fr_1fr_1fr_1fr_1fr] gap-4 px-2 py-3 items-center border-b border-gray-200"
-          >          
+            className="hidden md:grid grid-cols-[0.5fr_1fr_2fr_1.2fr_1fr_1fr_1fr_1fr] gap-4 px-2 py-3 items-center border-b border-gray-200"
+          >       
               <div className="text-sm text-gray-700">{stt}</div>
               
               {product.images?.length && product.images.some((img) => img?.trim() !== "") ? (
@@ -327,6 +328,101 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
             </div>
           );
         })}
+
+        {/* Mobile view */}
+        <div className="md:hidden space-y-4">
+          {paginatedProducts.map((product, index) => {
+            const stt = (currentPage - 1) * ITEMS_PER_PAGE + index + 1;
+            return (
+              <div key={product.id} className="border border-gray-200 rounded-xl p-4 bg-white space-y-2 shadow-sm">
+                  {/* <div className="text-sm text-gray-500">Stt: {stt}</div>  */}
+                <div className="flex items-center gap-3">
+                  {product.images?.length && product.images.some((img) => img?.trim() !== "") ? (
+                    <div className="w-20 h-20 rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
+                      <Image
+                        src={product.images.find((img) => img?.trim() !== "")!}
+                        alt={product.name}
+                        width={80}
+                        height={80}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-20 h-20 rounded-lg border border-dashed border-gray-300 flex items-center justify-center text-xs text-gray-400 text-center p-2 flex-shrink-0">
+                      Không có ảnh
+                    </div>
+                  )}
+
+                  <div className="flex-1 space-y-1">
+                    <div className="font-medium text-gray-800">{product.name}</div>
+                    <div className="text-xs text-gray-600">{product.categoryName}</div>
+                    <div className="text-sm text-[#960130] font-semibold">{formatPrice(product.price)}</div>
+                    <div className="flex gap-1 flex-wrap mt-1">
+                      {product.isNew && (
+                        <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-medium">
+                          Mới
+                        </span>
+                      )}
+                      {product.featuredLevel === 1 && (
+                        <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
+                          Nổi bật
+                        </span>
+                      )}
+                      <span className={clsx(
+                        "text-xs px-2 py-0.5 rounded-full font-medium",
+                        productStatusClass[getDisplayStatus(product)]
+                      )}>
+                        {productStatusLabel[getDisplayStatus(product)]}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-sm text-gray-600 flex justify-between pt-2 border-t">
+                  <span>Tồn kho: {product.stock}</span>
+                  <div className="flex gap-2">
+                  <button
+                    className="bg-blue-100 hover:bg-blue-200 text-black px-3 py-1.5 rounded-md transition inline-flex items-center justify-center"
+                    onClick={() => {
+                      setViewProductId(product.id);
+                      setShowDetailModal(true);
+                    }}
+                    title="Xem chi tiết"
+                  >
+                    <i className="bx bx-show text-lg" />
+                  </button>
+
+                    <button
+                      className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1.5 rounded-md transition inline-flex items-center justify-center"
+                      onClick={() => {
+                        setSelectedProduct({
+                          _id: product.id,
+                          name: product.name,
+                          price: product.price,
+                          sale: product.discount,
+                          product_hot: product.featuredLevel,
+                          isActive: product.status === "active",
+                          description: product.description,
+                          id_category: product.category,
+                          variants: product.variants || [],
+                          images: product.images || [],
+                          stock: product.stock,
+                        });
+                        setShowModal(true);
+                      }}
+                      title="Chỉnh sửa"
+                    >
+                      <i className="bx bx-pencil text-lg" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+
+
       </div>
 
       <Pagination

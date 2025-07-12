@@ -9,6 +9,11 @@ export interface ProductVariant {
   id_category?: string;
   isBulkCreated?: boolean;
 
+  name?: string;       
+  productName?: string;    
+  isActive?: boolean;
+  productId?: string;
+
 }
 
   export interface Product {

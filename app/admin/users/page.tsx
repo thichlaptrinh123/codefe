@@ -13,7 +13,6 @@ import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { convertRoleToDb, roleMap } from "@/app/admin/components/user/role-utils";
 
-
 export default function UserPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState("");

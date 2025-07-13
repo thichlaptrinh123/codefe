@@ -87,63 +87,67 @@ export default function CollectionPage() {
 
   return (
     <section className="p-4 space-y-6">
-      {/* Tiêu đề + Bộ lọc */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-h3 font-semibold text-gray-800">Quản lý bộ sưu tập</h1>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
-          <SearchInput
-            value={searchTerm}
-            placeholder="Tìm bộ sưu tập..."
-            onChange={setSearchTerm}
-          />
-          <StatusFilter
-            value={filterStatus}
-            onChange={(val) => setFilterStatus(val as "all" | "published" | "draft")}
-            options={[
-              { label: "Tất cả trạng thái", value: "all" },
-              { label: "Hoạt động", value: "published" },
-              { label: "Tạm ngưng", value: "draft" },
-            ]}
-          />
-        </div>
+    {/* ✅ Tiêu đề + Bộ lọc */}
+    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      {/* Tiêu đề */}
+      <h1 className="text-h3 font-semibold text-gray-800">Quản lý bộ sưu tập</h1>
+  
+      {/* Bộ lọc */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full lg:w-auto">
+        <SearchInput
+          value={searchTerm}
+          placeholder="Tìm bộ sưu tập..."
+          onChange={setSearchTerm}
+        />
+        <StatusFilter
+          value={filterStatus}
+          onChange={(val) => setFilterStatus(val as "all" | "published" | "draft")}
+          options={[
+            { label: "Tất cả trạng thái", value: "all" },
+            { label: "Hoạt động", value: "published" },
+            { label: "Tạm ngưng", value: "draft" },
+          ]}
+        />
       </div>
-
-      {/* Nút thêm */}
-      <div className="flex justify-end">
-        <button
-          onClick={() => {
-            setEditingCollection(null);
-            setIsModalOpen(true);
-          }}
-          className="px-4 py-2 text-sm bg-[#960130] text-white rounded-md hover:bg-[#B3123D]"
-        >
-          + Thêm bộ sưu tập
-        </button>
-      </div>
-
-      {/* Bảng danh sách */}
-      <div className="bg-white rounded-xl shadow overflow-hidden">
-        <Table data={paginated} onEdit={handleEditClick} />
-      </div>
-
-      {/* Phân trang */}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
-
-      {/* Modal thêm/sửa */}
-      <AddCollectionModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
+    </div>
+  
+    {/* ✅ Nút thêm */}
+    <div className="flex justify-end">
+      <button
+        onClick={() => {
           setEditingCollection(null);
+          setIsModalOpen(true);
         }}
-        onSuccess={handleSubmit}
-        initialData={editingCollection}
-        isEdit={!!editingCollection}
-      />
-    </section>
+        className="px-4 py-2 text-sm bg-[#960130] text-white rounded-md hover:bg-[#B3123D]"
+      >
+        + Thêm bộ sưu tập
+      </button>
+    </div>
+  
+    {/* ✅ Danh sách */}
+    <div className="bg-white rounded-xl shadow overflow-hidden">
+      <Table data={paginated} onEdit={handleEditClick} />
+    </div>
+  
+    {/* ✅ Phân trang */}
+    <Pagination
+      currentPage={currentPage}
+      totalPages={totalPages}
+      onPageChange={setCurrentPage}
+    />
+  
+    {/* ✅ Modal thêm/sửa */}
+    <AddCollectionModal
+      isOpen={isModalOpen}
+      onClose={() => {
+        setIsModalOpen(false);
+        setEditingCollection(null);
+      }}
+      onSuccess={handleSubmit}
+      initialData={editingCollection}
+      isEdit={!!editingCollection}
+    />
+  </section>
+  
   );
 }

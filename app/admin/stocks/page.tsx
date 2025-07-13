@@ -14,6 +14,7 @@ import {
   ProductStatus,
 } from "../components/product/product-status";
 import ProductDetailModal from "../components/product/product-detail-modal";
+import VariantModal from "../components/product/variant-modal";
 
 export default function StockPage() {
   const [variants, setVariants] = useState<ProductVariant[]>([]);
@@ -227,6 +228,17 @@ export default function StockPage() {
         onClose={() => setShowDetailModal(false)}
         productId={viewProductId}
       />
+
+    <VariantModal
+      open={showModal}
+      onClose={() => setShowModal(false)}
+      variant={selectedVariant}
+      onSuccess={() => {
+        setShowModal(false);
+        fetchVariants(); // load lại danh sách
+      }}
+    />
+
     </section>
   );
 }

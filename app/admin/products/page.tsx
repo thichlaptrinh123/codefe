@@ -288,18 +288,6 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
                 </span>
               </div>
               <div className="text-center flex justify-center gap-2">
-  {/* 👁 Nút xem chi tiết */}
-  <button
-    className="bg-blue-100 hover:bg-blue-200 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
-    onClick={() => {
-      setViewProductId(product.id);
-      setShowDetailModal(true);
-    }}
-    title="Xem chi tiết"
-  >
-    <i className="bx bx-show text-lg" />
-  </button>
-
   {/* ✏ Nút chỉnh sửa */}
   <button
       className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
@@ -322,6 +310,17 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
     title="Chỉnh sửa"
   >
     <i className="bx bx-pencil text-lg" />
+  </button>
+    {/* 👁 Nút xem chi tiết */}
+    <button
+    className="bg-blue-100 hover:bg-blue-200 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
+    onClick={() => {
+      setViewProductId(product.id);
+      setShowDetailModal(true);
+    }}
+    title="Xem chi tiết"
+  >
+    <i className="bx bx-show text-lg" />
   </button>
 </div>
 
@@ -381,17 +380,6 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
                 <div className="text-sm text-gray-600 flex justify-between pt-2 border-t">
                   <span>Tồn kho: {product.stock}</span>
                   <div className="flex gap-2">
-                  <button
-                    className="bg-blue-100 hover:bg-blue-200 text-black px-3 py-1.5 rounded-md transition inline-flex items-center justify-center"
-                    onClick={() => {
-                      setViewProductId(product.id);
-                      setShowDetailModal(true);
-                    }}
-                    title="Xem chi tiết"
-                  >
-                    <i className="bx bx-show text-lg" />
-                  </button>
-
                     <button
                       className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1.5 rounded-md transition inline-flex items-center justify-center"
                       onClick={() => {
@@ -414,6 +402,16 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
                     >
                       <i className="bx bx-pencil text-lg" />
                     </button>
+                    <button
+                    className="bg-blue-100 hover:bg-blue-200 text-black px-3 py-1.5 rounded-md transition inline-flex items-center justify-center"
+                    onClick={() => {
+                      setViewProductId(product.id);
+                      setShowDetailModal(true);
+                    }}
+                    title="Xem chi tiết"
+                  >
+                    <i className="bx bx-show text-lg" />
+                  </button>
                   </div>
                 </div>
               </div>

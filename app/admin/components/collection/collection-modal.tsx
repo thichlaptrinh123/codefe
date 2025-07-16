@@ -89,8 +89,8 @@ export default function AddCollectionModal({
     const payload = {
       name: title,
       description,
-      thumbnail_url: imageUrl, // 👈 sửa lại field
-      isActive: status === "published", // 👈 sửa đúng field backend
+      thumbnail_url: imageUrl,
+      isActive: status === "published", 
       id_user: userId,
     };
 

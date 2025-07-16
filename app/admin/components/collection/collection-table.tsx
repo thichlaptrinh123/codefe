@@ -155,9 +155,6 @@ export default function Table({ data, onEdit }: Props) {
         </div>
       </div>
     );
-    
-    
-    
   })}
 </div>
 

@@ -171,7 +171,7 @@ export default function OrdersPage() {
       </div>
 
       {/* Time filter */}
-      <div className="flex justify-end">
+      <div className="flex justify-end mt-2 md:mt-0 -mt-1">
         <TimeFilter value={timeFilter} onChange={setTimeFilter} />
       </div>
 
@@ -255,49 +255,69 @@ export default function OrdersPage() {
     </div>
   ))}
 
-  {/* Mobile view giống cũ (không thay đổi) */}
-  <div className="lg:hidden space-y-4">
+  <div className="lg:hidden space-y-4 mt-4">
     {paginatedOrders.map((order, index) => (
       <div
         key={order.id}
-        className="block border border-gray-200 rounded-xl p-4 space-y-1 bg-white shadow-sm"
+        className="border border-gray-200 rounded-xl p-4 bg-white shadow-sm space-y-3 text-sm"
       >
-        <div className="font-medium text-base text-gray-800">{order.customerName}</div>
-        <div className="text-xs text-gray-500">{order.phone}</div>
-        <div className="text-xs">
-          Mã đơn: <span className="font-medium">{order.id}</span>
-        </div>
-        <div className="text-xs truncate">Địa chỉ: {order.address}</div>
-        <div className="text-xs">
-          Ngày đặt: {dayjs(order.createdAt).format("DD-MM-YYYY")}
-        </div>
-        <div className="text-xs flex gap-1 items-center">
-          Trạng thái:
-          <span
-            className={clsx(
-              "px-2 py-1 rounded-full text-xs font-medium capitalize",
-              STATUS_STYLE[order.status]
-            )}
-          >
-            {ORDER_STATUS[order.status]}
+        {/* STT + Mã đơn */}
+        <div className="flex justify-between items-center">
+          <span className="text-xs italic text-gray-500">
+            STT: {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
+          </span>
+          <span className="text-xs text-gray-600">
+            Mã đơn: <span className="font-semibold">{order.id}</span>
           </span>
         </div>
-        <div className="text-xs">
-          Thanh toán: <span className="capitalize">{order.paymentMethod}</span>
+
+        {/* Khách hàng */}
+        <div className="text-gray-800 font-medium text-base">
+          {order.customerName}
         </div>
-        <div className="text-sm font-semibold text-[#960130]">
-          Tổng: {order.total.toLocaleString("vi-VN")} VNĐ
+        <div className="text-xs text-gray-500">{order.phone}</div>
+
+        {/* Địa chỉ */}
+        <div className="text-xs text-gray-600">
+          <span className="text-gray-500">Địa chỉ: </span>
+          <span className="break-words">{order.address}</span>
         </div>
-        
+
+        {/* Ngày đặt + Thanh toán */}
+        <div className="flex justify-between text-xs text-gray-600">
+          <span>Ngày: {dayjs(order.createdAt).format("DD-MM-YYYY")}</span>
+          <span className="capitalize">Thanh toán: {order.paymentMethod}</span>
+        </div>
+
+       {/* Tổng tiền */}
+      <div className="text-right font-semibold text-[#960130]">
+        {order.total.toLocaleString("vi-VN")} VNĐ
+      </div>
+
+       {/* Trạng thái + Nút xem */}
+      <div className="pt-2 flex justify-between items-center border-t border-gray-100">
+        <span
+          className={clsx(
+            "px-2 py-1 rounded-full text-xs font-medium capitalize",
+            STATUS_STYLE[order.status]
+          )}
+        >
+          {ORDER_STATUS[order.status]}
+        </span>
+
         <button
-          className="bg-blue-100 hover:bg-blue-200 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
+          className="bg-blue-100 hover:bg-blue-200 text-black px-3 py-1.5 rounded-md transition inline-flex items-center justify-center"
           onClick={() => setSelectedOrder(order)}
+          title="Xem đơn hàng"
         >
           <i className="bx bx-show text-lg" />
         </button>
       </div>
+
+      </div>
     ))}
   </div>
+
 </div>
 
 

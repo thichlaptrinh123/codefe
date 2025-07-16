@@ -13,7 +13,6 @@ import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { convertRoleToDb, roleMap } from "@/app/admin/components/user/role-utils";
 
-
 export default function UserPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState("");
@@ -217,51 +216,20 @@ export default function UserPage() {
     );
   })}
 
-<div className="lg:hidden space-y-4">
-  {paginatedUsers.map((user, index) => (
-    <div
-      key={user.id ?? index}
-      className="border border-gray-200 rounded-xl p-4 space-y-2 shadow-sm"
-    >
-      <div className="space-y-1">
-        <div className="text-sm text-gray-700">
-          <span className="font-semibold text-gray-500">Họ tên: </span>
-          {user.name}
-        </div>
-        <div className="text-sm text-gray-700">
-          <span className="font-semibold text-gray-500">SĐT: </span>
-          {user.phone}
-        </div>
-        <div className="text-sm text-gray-700 break-words">
-          <span className="font-semibold text-gray-500">Email: </span>
-          {user.email}
-        </div>
-        <div className="text-sm text-gray-700 break-words">
-          <span className="font-semibold text-gray-500">Địa chỉ: </span>
-          {user.address}
-        </div>
-        <div className="text-sm text-gray-700">
-          <span className="font-semibold text-gray-500">Vai trò: </span>
+<div className="lg:hidden space-y-4 mt-4">
+  {paginatedUsers.map((user, index) => {
+    const stt = (currentPage - 1) * ITEMS_PER_PAGE + index + 1;
+    return (
+      <div
+        key={user.id ?? index}
+        className="border rounded-lg p-4 shadow-sm space-y-3 text-sm bg-white"
+      >
+        {/* STT + Trạng thái */}
+        <div className="flex justify-between items-center">
+          <div className="text-xs text-gray-500 italic">STT: {stt}</div>
           <span
             className={clsx(
-              "text-xs px-2 py-0.5 rounded-full font-medium capitalize",
-              {
-                "bg-gray-100 text-gray-700": user.role === "customer",
-                "bg-blue-100 text-blue-700": user.role === "super-admin",
-                "bg-purple-100 text-purple-700": user.role === "product-manager",
-                "bg-yellow-100 text-yellow-800": user.role === "order-manager",
-                "bg-pink-100 text-pink-700": user.role === "post-manager",
-              }
-            )}
-          >
-            {roleMap[user.role as keyof typeof roleMap]}
-          </span>
-        </div>
-        <div className="text-sm text-gray-700">
-          <span className="font-semibold text-gray-500">Trạng thái: </span>
-          <span
-            className={clsx(
-              "text-xs px-2 py-0.5 rounded-full font-medium",
+              "text-xs px-2 py-1 rounded-full font-medium",
               user.status === "active"
                 ? "bg-green-100 text-green-700"
                 : "bg-red-100 text-red-600"
@@ -270,23 +238,68 @@ export default function UserPage() {
             {user.status === "active" ? "Hoạt động" : "Tạm ngưng"}
           </span>
         </div>
-      </div>
 
-      <div className="flex justify-end gap-2 pt-3 border-t">
-        <button
-          className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1.5 rounded-md inline-flex items-center justify-center"
-          onClick={() => {
-            setSelectedUser(user);
-            setShowModal(true);
-          }}
-          title="Chỉnh sửa"
-        >
-          <i className="bx bx-pencil text-lg" />
-        </button>
+        {/* Họ tên & SĐT */}
+        <p className="text-gray-700">
+          <span className="text-gray-500">Họ tên:</span>{" "}
+          <span className="text-gray-900 font-semibold">{user.name}</span>
+        </p>
+        <p className="text-gray-500">
+          <span className="text-gray-500">SĐT:</span> {user.phone}
+        </p>
+
+        {/* Email */}
+        <div className="text-gray-700">
+          <span className="text-gray-500">Email:</span> {user.email}
+        </div>
+
+        {/* Địa chỉ */}
+        <div className="text-gray-700">
+          <span className="text-gray-500">Địa chỉ:</span><br />
+          {user.address}
+        </div>
+
+        {/* Vai trò + Đơn hàng + Sửa */}
+        <div className="flex justify-between items-center pt-3 border-t border-gray-200">
+          <div className="space-y-1">
+            <div>
+              <span className="text-gray-500">Vai trò:</span>{" "}
+              <span
+                className={clsx(
+                  "px-2 py-1 rounded-full text-xs font-medium capitalize",
+                  {
+                    "bg-gray-100 text-gray-700": user.role === "customer",
+                    "bg-blue-100 text-blue-700": user.role === "super-admin",
+                    "bg-purple-100 text-purple-700": user.role === "product-manager",
+                    "bg-yellow-100 text-yellow-800": user.role === "order-manager",
+                    "bg-pink-100 text-pink-700": user.role === "post-manager",
+                  }
+                )}
+              >
+                {roleMap[user.role as keyof typeof roleMap]}
+              </span>
+            </div>
+            <div className="text-xs italic text-gray-500">
+              {user.orderCount} đơn hàng
+            </div>
+          </div>
+
+          <button
+            className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1.5 rounded-md inline-flex items-center justify-center"
+            onClick={() => {
+              setSelectedUser(user);
+              setShowModal(true);
+            }}
+            title="Chỉnh sửa"
+          >
+            <i className="bx bx-pencil text-lg" />
+          </button>
+        </div>
       </div>
-    </div>
-  ))}
+    );
+  })}
 </div>
+
 
 </div>
 

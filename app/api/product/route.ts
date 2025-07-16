@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/lib/mongodb";
 import Product from "@/model/products";
+import "@/model/categories";
 
 // GET: Lấy tất cả sản phẩm, có populate danh mục
 export async function GET() {

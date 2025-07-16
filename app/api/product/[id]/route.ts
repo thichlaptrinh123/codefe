@@ -2,7 +2,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/lib/mongodb";
 import Product from "@/model/products";
-import Variant from "../../../../model/variants"; // ✅ Thêm dòng này
+import Variant from "../../../../model/variants"; 
+import "@/model/categories";
 
 
 // GET: Lấy sản phẩm theo ID và tăng viewCount

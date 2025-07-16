@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import { toast } from "react-toastify";
 import Pagination from "../components/shared/pagination";
@@ -25,6 +25,8 @@ export default function OptionManager() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [colorInputs, setColorInputs] = useState<{ name: string; hex: string }[]>([]);
+  const formRef = useRef<HTMLDivElement>(null);
+
 
   const ITEMS_PER_PAGE = 5;
 
@@ -222,7 +224,7 @@ export default function OptionManager() {
   
       {/* Form + Bảng */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="bg-white p-4 rounded-xl shadow space-y-4 h-fit">
+        <div ref={formRef} className="bg-white p-4 rounded-xl shadow space-y-4 h-fit">
           <h2 className="text-lg font-semibold mb-4">
             {editing ? "Sửa" : "Thêm"} {type === "size" ? "Size" : "Màu"}
           </h2>
@@ -332,80 +334,146 @@ export default function OptionManager() {
         </div>
   
         {/* Bảng hiển thị */}
-        <div className="lg:col-span-2 space-y-4">
-          <div className="bg-white rounded-xl shadow p-4 space-y-3">
-            <h1 className="text-lg font-semibold mb-4">Danh sách</h1>
-  
-            <div className="grid grid-cols-5 gap-4 font-semibold text-sm px-2 py-2 bg-[#F9F9F9] rounded-md">
-            <div>STT</div>
-            <div>Loại danh mục</div>
-            <div>Giá trị</div>
-            <div className="text-center">Trạng thái</div>
-            <div className="text-center">Thao tác</div> {/* ✅ thêm dòng này */}
-            </div>
-  
-            {paginated.map((item, index) => {
-  const stt = index + 1 + (currentPage - 1) * ITEMS_PER_PAGE;
+  <div className="lg:col-span-2 space-y-4">
+  <div className="bg-white rounded-xl shadow p-4 space-y-3">
+    <h1 className="text-lg font-semibold mb-4">Danh sách</h1>
 
-  return (
-    <div
-      key={item._id}
-      className="grid grid-cols-5 gap-4 items-center px-2 py-3 border-b border-gray-200"
-    >
-      <div className="text-sm text-gray-700">{stt}</div>
-      <div className="text-sm text-gray-700">{item.categoryType}</div>
-
-      <div className="text-sm text-gray-700 flex flex-wrap gap-2">
-        {type === "color" && Array.isArray(item.values) && typeof item.values[0] === "object" ? (
-          (item.values as { name: string; hex: string }[]).map((c, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-1 border px-2 py-1 rounded-md"
-            >
-              <span
-                className="w-4 h-4 rounded-full border"
-                style={{ backgroundColor: c.hex }}
-              ></span>
-              <span>{c.name}</span>
-            </div>
-          ))
-        ) : (
-          <span>{(item.values as string[])?.join(", ")}</span>
-        )}
-      </div>
-
-      <div className="text-center">
-        <span
-          className={clsx(
-            "text-xs font-semibold px-3 py-1 rounded-full inline-block",
-            item.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
-          )}
-        >
-          {item.isActive ? "Hoạt động" : "Tạm ngưng"}
-        </span>
-      </div>
-
-      {/* ✅ Cột thao tác */}
-      <div className="text-center">
-        <button
-          className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
-          onClick={() => handleEdit(item)}
-        >
-          <i className="bx bx-pencil text-lg" />
-        </button>
-      </div>
+    {/* 👉 Desktop */}
+    <div className="hidden lg:grid grid-cols-5 gap-4 font-semibold text-sm px-2 py-2 bg-[#F9F9F9] rounded-md">
+      <div>STT</div>
+      <div>Loại danh mục</div>
+      <div>Giá trị</div>
+      <div className="text-center">Trạng thái</div>
+      <div className="text-center">Thao tác</div>
     </div>
-  );
-})}
 
+    {paginated.map((item, index) => {
+      const stt = index + 1 + (currentPage - 1) * ITEMS_PER_PAGE;
+      return (
+        <div
+          key={item._id}
+          className="hidden lg:grid grid-cols-5 gap-4 items-center px-2 py-3 border-b border-gray-200"
+        >
+          <div className="text-sm text-gray-700">{stt}</div>
+          <div className="text-sm text-gray-700">{item.categoryType}</div>
+
+          <div className="text-sm text-gray-700 flex flex-wrap gap-2">
+            {type === "color" && Array.isArray(item.values) && typeof item.values[0] === "object" ? (
+              (item.values as { name: string; hex: string }[]).map((c, i) => (
+                <div key={i} className="flex items-center gap-1 border px-2 py-1 rounded-md">
+                  <span className="w-4 h-4 rounded-full border" style={{ backgroundColor: c.hex }}></span>
+                  <span>{c.name}</span>
+                </div>
+              ))
+            ) : (
+              <span>{(item.values as string[])?.join(", ")}</span>
+            )}
           </div>
-  
-          <Pagination
-            currentPage={currentPage}
-            totalPages={Math.ceil(filteredOptions.length / ITEMS_PER_PAGE)}
-            onPageChange={setCurrentPage}
-          />
+
+          <div className="text-center">
+            <span
+              className={clsx(
+                "text-xs font-semibold px-3 py-1 rounded-full inline-block",
+                item.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
+              )}
+            >
+              {item.isActive ? "Hoạt động" : "Tạm ngưng"}
+            </span>
+          </div>
+
+          <div className="text-center">
+            <button
+              className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
+              onClick={() => {
+                handleEdit(item);
+                setTimeout(() => {
+                  formRef.current?.scrollIntoView({ behavior: "smooth" });
+                }, 100);
+              }}
+            >
+              <i className="bx bx-pencil text-lg" />
+            </button>
+          </div>
         </div>
+      );
+    })}
+
+    {/* 👉 Mobile */}
+    <div className="lg:hidden space-y-4 mt-4">
+      {paginated.map((item, index) => {
+        const stt = index + 1 + (currentPage - 1) * ITEMS_PER_PAGE;
+        return (
+          <div
+            key={item._id}
+            className="border rounded-lg p-4 shadow-sm space-y-3 text-sm bg-white"
+          >
+            {/* STT + Trạng thái */}
+            <div className="flex justify-between items-center">
+              <div className="text-xs text-gray-500 italic">STT: {stt}</div>
+              <span
+                className={clsx(
+                  "text-xs px-2 py-1 rounded-full font-medium",
+                  item.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"
+                )}
+              >
+                {item.isActive ? "Hoạt động" : "Tạm ngưng"}
+              </span>
+            </div>
+
+            {/* Loại danh mục */}
+            <p className="text-gray-700">
+              <span className="text-gray-500">Loại danh mục:</span>{" "}
+              <span className="font-medium">{item.categoryType}</span>
+            </p>
+
+            {/* Giá trị */}
+            <div className="text-gray-700">
+              <span className="text-gray-500">
+                {type === "size" ? "Size:" : "Màu sắc:"}
+              </span>{" "}
+              {type === "color" && Array.isArray(item.values) && typeof item.values[0] === "object" ? (
+                <div className="mt-1 flex flex-wrap gap-2">
+                  {(item.values as { name: string; hex: string }[]).map((c, i) => (
+                    <div key={i} className="flex items-center gap-1 border px-2 py-1 rounded-md">
+                      <span className="w-4 h-4 rounded-full border" style={{ backgroundColor: c.hex }}></span>
+                      <span>{c.name}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <span className="font-medium">{(item.values as string[])?.join(", ")}</span>
+              )}
+            </div>
+
+            {/* Nút thao tác */}
+            <div className="flex justify-end pt-2 border-t border-gray-200">
+              <button
+                className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1.5 rounded-md transition inline-flex items-center justify-center"
+                onClick={() => {
+                  handleEdit(item);
+                  setTimeout(() => {
+                    formRef.current?.scrollIntoView({ behavior: "smooth" });
+                  }, 100);
+                }}
+                title="Chỉnh sửa"
+              >
+                <i className="bx bx-pencil text-lg" />
+              </button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+
+  {/* ✅ Pagination */}
+  <Pagination
+    currentPage={currentPage}
+    totalPages={Math.ceil(filteredOptions.length / ITEMS_PER_PAGE)}
+    onPageChange={setCurrentPage}
+  />
+</div>
+
       </div>
     </div>
   );

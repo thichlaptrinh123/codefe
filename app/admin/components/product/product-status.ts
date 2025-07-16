@@ -1,3 +1,4 @@
+// product-status.ts
 export type ProductStatus = "active" | "inactive" | "low-stock" | "sold-out";
 
 export const productStatusLabel: Record<ProductStatus, string> = {

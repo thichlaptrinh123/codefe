@@ -1,4 +1,4 @@
-// /api/variant/sold/[id]
+// /api/variant/sold/[id]/route.ts
 import { NextResponse } from "next/server";
 import { dbConnect } from "@/lib/mongodb";
 import Variant from "@/model/variants";

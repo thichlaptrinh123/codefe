@@ -337,30 +337,70 @@ if (!isOpen) return null;
             </div>
 
             <div>
-              <h3 className="text-lg font-medium text-gray-800 mb-2">Danh sách biến thể</h3>
-              {safeProduct.variants?.length > 0 ? (
-                <div className="border rounded overflow-hidden text-sm">
-                  <div className="grid grid-cols-5 bg-[#f9f9f9] px-4 py-2 font-semibold border-b">
-                    <div>Size</div>
-                    <div>Màu</div>
-                    <div>Giá</div>
-                    <div>Tồn kho</div>
-                    <div>Đã bán</div>
-                  </div>
-                  {safeProduct.variants.map((v: ProductVariant, i) => (
-                    <div key={i} className="grid grid-cols-5 px-4 py-2 border-b text-gray-700">
-                      <div>{v.size || "-"}</div>
-                      <div>{v.color || "-"}</div>
-                      <div>{(v.price ?? product.price ?? 0).toLocaleString("vi-VN")} VNĐ</div>
-                      <div>{v.stock_quantity ?? 0}</div>
-                      <div>{v.sold_quantity ?? 0}</div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500 italic">Chưa có biến thể.</p>
-              )}
+  <h3 className="text-lg font-medium text-gray-800 mb-2">Danh sách biến thể</h3>
+  {safeProduct.variants?.length > 0 ? (
+    <div className="border rounded overflow-hidden text-sm">
+      {/* Header chỉ hiện trên md trở lên */}
+      <div className="hidden md:grid grid-cols-5 bg-[#f9f9f9] px-4 py-2 font-semibold border-b">
+        <div>Size</div>
+        <div>Màu</div>
+        <div>Giá</div>
+        <div>Tồn kho</div>
+        <div>Đã bán</div>
+      </div>
+
+      {/* Dữ liệu biến thể */}
+      {safeProduct.variants.map((v: ProductVariant, i) => (
+        <div
+          key={i}
+          className="grid grid-cols-5 md:grid-cols-5 px-4 py-2 border-b text-gray-700 hidden md:grid"
+        >
+          <div>{v.size || "-"}</div>
+          <div>{v.color || "-"}</div>
+          <div>{(v.price ?? product.price ?? 0).toLocaleString("vi-VN")} VNĐ</div>
+          <div>{v.stock_quantity ?? 0}</div>
+          <div>{v.sold_quantity ?? 0}</div>
+        </div>
+      ))}
+
+      {/* Mobile View */}
+      <div className="md:hidden space-y-3 px-4 py-3">
+        {safeProduct.variants.map((v: ProductVariant, i) => (
+          <div
+            key={i}
+            className="border rounded-lg p-3 bg-white space-y-1 shadow-sm text-sm"
+          >
+            <div className="flex justify-between">
+              <span className="text-gray-500">Size:</span>
+              <span className="font-medium">{v.size || "-"}</span>
             </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Màu:</span>
+              <span className="font-medium">{v.color || "-"}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Giá:</span>
+              <span className="font-medium">
+                {(v.price ?? product.price ?? 0).toLocaleString("vi-VN")} VNĐ
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Tồn kho:</span>
+              <span className="font-medium">{v.stock_quantity ?? 0}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Đã bán:</span>
+              <span className="font-medium">{v.sold_quantity ?? 0}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : (
+    <p className="text-sm text-gray-500 italic">Chưa có biến thể.</p>
+  )}
+</div>
+
           </>
         )}
       </div>

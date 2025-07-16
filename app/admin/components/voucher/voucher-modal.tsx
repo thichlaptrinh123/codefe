@@ -312,16 +312,16 @@ export default function VoucherModal({ isOpen, onClose, onSave, initialData }: V
         </div>
   
         {/* Nút hành động */}
-        <div className="mt-6 flex flex-col sm:flex-row justify-end gap-3">
+        <div className="flex justify-end gap-2 pt-4">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-sm w-full sm:w-auto"
+            className="px-4 py-2 text-sm bg-gray-100 border rounded-md hover:bg-gray-200"
           >
             Đóng
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 text-sm bg-[#960130] text-white rounded-md hover:bg-[#B3123D] w-full sm:w-auto"
+            className="px-4 py-2 text-sm bg-[#960130] text-white rounded-md hover:bg-[#B3123D]"
           >
             {initialData ? "Lưu thay đổi" : "Thêm mới"}
           </button>

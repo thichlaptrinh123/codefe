@@ -141,18 +141,20 @@ const handleEditClick = (blog: Blog) => {
         </div>
       </div>
 
-      {/* ➕ Nút thêm */}
-      <div className="flex justify-end">
-        <button
-          onClick={() => {
-            setEditingBlog(null);
-            setIsModalOpen(true);
-          }}
-          className="px-4 py-2 text-sm bg-[#960130] text-white rounded-md hover:bg-[#B3123D]"
-        >
-          + Thêm bài viết
-        </button>
-      </div>
+
+    {/* ➕ Nút thêm */}
+<div className="flex justify-end">
+  <button
+    onClick={() => {
+      setEditingBlog(null);
+      setIsModalOpen(true);
+    }}
+    className="px-4 py-2 text-sm bg-[#960130] text-white rounded-md hover:bg-[#B3123D]"
+  >
+    + Thêm bài viết
+  </button>
+</div>
+
 
       {/* 📋 Bảng danh sách */}
       <div className="bg-white rounded-xl shadow overflow-hidden">

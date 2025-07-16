@@ -63,7 +63,7 @@ export default function Table({ data, onEdit }: Props) {
         <div className="text-sm text-gray-800 font-medium max-w-[200px] line-clamp-1 break-words">
           {item.name}
         </div>
-        <div className="text-sm text-gray-600 max-w-[250px] line-clamp-2 break-words">
+        <div className="text-sm text-gray-600 max-w-[200px] line-clamp-2 break-words">
           {item.description}
         </div>
         <div>

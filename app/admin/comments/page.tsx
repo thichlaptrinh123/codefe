@@ -170,7 +170,6 @@ export default function CommentsPage() {
         />
       </div> */}
 
-    
 
       {/* Danh sách bình luận */}
       <CommentTable data={paginatedComments} onToggleStatus={toggleStatus} />

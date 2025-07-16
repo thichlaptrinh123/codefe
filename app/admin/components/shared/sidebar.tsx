@@ -13,7 +13,7 @@ const sidebarItems = [
   { label: "Sản phẩm", icon: "bx-box", href: "/admin/products" },
   { label: "Size - Màu sắc", icon: "bx-palette", href: "/admin/options" },
   { label: "Đơn hàng", icon: "bx-cart", href: "/admin/orders" },
-  { label: "Tồn kho", icon: "bx-store", href: "/admin/stocks" },
+  // { label: "Tồn kho", icon: "bx-store", href: "/admin/stocks" },
   { label: "Người dùng", icon: "bx-user", href: "/admin/users" },
   { label: "Khuyến mãi", icon: "bx-gift", href: "/admin/vouchers" },
   { label: "Bài viết", icon: "bx-notepad", href: "/admin/blogs", active: true },

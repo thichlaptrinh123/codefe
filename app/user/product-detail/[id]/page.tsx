@@ -1,11 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Star, ShoppingCart, Truck, RotateCcw, HeadphonesIcon, X } from 'lucide-react';
 import './product-detail.css';
 
-const ProductDetail = ({ params }: { params: { id: string } }) => {
+interface Product {
+  _id: string;
+  name: string;
+  images: string[];
+  price: number;
+  sale: number;
+  description: string;
+  viewCount: number;
+  variants?: Variant[];
+}
+
+interface Variant {
+  _id: string;
+  color: string;
+  size: string;
+  quantity: number;
+}
+
+const ProductDetail = ({ params }: { params: Promise<{ id: string }> }) => {
+   const { id } = use(params);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(0);
   const [selectedSize, setSelectedSize] = useState('M');
@@ -13,44 +32,32 @@ const ProductDetail = ({ params }: { params: { id: string } }) => {
   const [showReviews, setShowReviews] = useState(false);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
 
-const productImages = [
-  '/images/a1.jpeg',
-  '/images/a1.jpeg',
-  '/images/a1.jpeg',
-  '/images/a1.jpeg'
-];
+  const [product, setProduct] = useState<Product | null>(null);
 
-  const colors = [
-    { name: 'Nâu', value: '#8B4513' },
-    { name: 'Đen', value: '#000000' },
-    { name: 'Trắng', value: '#FFFFFF' }
-  ];
-
-  const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
-
-  const reviews = [
-    {
-      id: 1,
-      name: 'Nguyễn Thanh Quý',
-      rating: 4.5,
-      date: '28/05/2025',
-      comment: 'Áo đẹp vượt mong đợi! Chất vải mềm, mịn, mặc rất thoải mái. Màu sắc y hình, giao hàng cũng nhanh chóng. Sẽ ủng hộ shop thêm nhiều lần nữa!'
-    },
-    {
-      id: 2,
-      name: 'Trần Văn An',
-      rating: 5,
-      date: '25/05/2025',
-      comment: 'Chất lượng tuyệt vời, form áo đẹp, vải cotton mềm mại. Đóng gói cẩn thận, giao hàng nhanh.'
-    },
-    {
-      id: 3,
-      name: 'Lê Thị Mai',
-      rating: 4,
-      date: '22/05/2025',
-      comment: 'Áo đẹp, chất vải ok, nhưng màu hơi đậm hơn trong hình một chút. Nhìn chung vẫn hài lòng.'
+useEffect(() => {
+  const fetchProduct = async () => {
+    try {
+      const res = await fetch(`/api/product/${id}`);
+      const data = await res.json();
+      setProduct(data);
+    } catch (err) {
+      console.error("Lỗi khi lấy dữ liệu sản phẩm:", err);
     }
-  ];
+  };
+
+  fetchProduct();
+}, [id]);
+
+
+const colors = Array.from(
+  new Set(product?.variants?.map(v => v.color))
+).map((color) => ({
+  name: color,
+  value: color.toLowerCase() // Nếu bạn dùng màu hex thì nên giữ nguyên
+}));
+
+const sizes = Array.from(new Set(product?.variants?.map(v => v.size)));
+
 
   const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
@@ -91,34 +98,41 @@ const productImages = [
 
       <div className="product-detail-content">
         {/* Product Images */}
-        <div className="product-images">
-          <div className="thumbnail-list">
-            {productImages.map((img, index) => (
-              <div
-                key={index}
-                className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
-                onClick={() => setSelectedImage(index)}
-              >
-                <Image src={img} alt={`Product ${index + 1}`} width={80} height={100} />
-              </div>
-            ))}
-          </div>
-          <div className="main-image">
-            <Image
-              src={productImages[selectedImage]}
-              alt="Product"
-              width={500}
-              height={600}
-              className="product-main-img"
-            />
-            <div className="expand-icon">⛶</div>
+<div className="product-images">
+  <div className="thumbnail-list">
+    {product?.images?.map((img, index) => (
+      <div
+        key={index}
+        className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
+        onClick={() => setSelectedImage(index)}
+      >
+        <Image
+          src={img}
+          alt={`Ảnh sản phẩm ${index + 1}`}
+          width={80}
+          height={100}
+        />
+      </div>
+    ))}
+  </div>
 
-          </div>
-        </div>
+  <div className="main-image">
+    <Image
+      src={product?.images?.[selectedImage] || "/no-image.jpg"}
+      alt="Ảnh chính"
+      width={500}
+      height={600}
+      className="product-main-img"
+    />
+    <div className="expand-icon">⛶</div>
+  </div>
+</div>
+
 
         {/* Product Info */}
+        {product && (
         <div className="product-info">
-          <h1 className="product-title">Áo Thun Seventy Seven 42 Nâu</h1>
+          <h1 className="product-title">{product.name}</h1>
           <div className="product-meta">
             <span className="sold-count">Đã bán được: 996 sản phẩm</span>
           </div>
@@ -143,45 +157,48 @@ const productImages = [
           </div>
 
           {/* Color Selection */}
-          <div className="color-selection">
-            <label>Màu sắc:</label>
-            <div className="color-options">
-              {colors.map((color, index) => (
-                <div
-                  key={index}
-                  className={`color-option ${selectedColor === index ? 'selected' : ''}`}
-                  onClick={() => setSelectedColor(index)}
-                >
-                  <div
-                    className="color-circle"
-                    style={{ backgroundColor: color.value }}
-                  ></div>
-                </div>
-              ))}
-            </div>
-          </div>
+         <div className="color-selection">
+  <label>Màu sắc:</label>
+  <div className="color-options">
+    {colors.map((color, index) => (
+      <div
+        key={index}
+        className={`color-option ${selectedColor === index ? 'selected' : ''}`}
+        onClick={() => setSelectedColor(index)}
+      >
+        <div
+          className="color-circle"
+          style={{ backgroundColor: color.value }}
+          title={color.name}
+        ></div>
+      </div>
+    ))}
+  </div>
+</div>
+
 
           {/* Size Selection */}
-          <div className="size-selection">
-            <label>Size:</label>
-            <div className="size-options">
-              {sizes.map((size) => (
-                <button
-                  key={size}
-                  className={`size-option ${selectedSize === size ? 'selected' : ''}`}
-                  onClick={() => setSelectedSize(size)}
-                >
-                  {size}
-                </button>
-              ))}
-                <button 
-                    className="size-guide-btn"
-                    onClick={() => setShowSizeGuide(true)}
-                    >
-                    📏 Hướng dẫn chọn size
-                </button>
-            </div>
-          </div>
+         <div className="size-selection">
+  <label>Size:</label>
+  <div className="size-options">
+    {sizes.map((size) => (
+      <button
+        key={size}
+        className={`size-option ${selectedSize === size ? 'selected' : ''}`}
+        onClick={() => setSelectedSize(size)}
+      >
+        {size}
+      </button>
+    ))}
+    <button 
+      className="size-guide-btn"
+      onClick={() => setShowSizeGuide(true)}
+    >
+      📏 Hướng dẫn chọn size
+    </button>
+  </div>
+</div>
+
 
           {/* Quantity */}
           <div className="quantity-section">
@@ -241,6 +258,7 @@ const productImages = [
             </div>
           </div>
         </div>
+        )}
       </div>
 
       {/* Reviews Section */}
@@ -285,7 +303,7 @@ const productImages = [
           Tất cả (23 đánh giá)
         </button>
 
-        <div className="reviews-preview">
+        {/* <div className="reviews-preview">
           {reviews.slice(0, 2).map((review) => (
             <div key={review.id} className="review-item">
               <div className="review-header">
@@ -311,7 +329,7 @@ const productImages = [
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* Reviews Modal */}
@@ -356,7 +374,7 @@ const productImages = [
                   </div>
                 </div>
               </div>
-              <div className="all-reviews">
+              {/* <div className="all-reviews">
                 {reviews.map((review) => (
                   <div key={review.id} className="review-item">
                     <div className="review-header">
@@ -382,7 +400,7 @@ const productImages = [
                     </div>
                   </div>
                 ))}
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

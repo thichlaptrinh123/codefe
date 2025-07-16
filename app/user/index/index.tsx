@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 import React, { useState, useEffect, JSX } from 'react';
 import '../css_user/banner.css';
@@ -37,6 +38,24 @@ interface SlideData {
   };
 }
 
+interface IProduct {
+  _id: string;
+  name: string;
+  images: string[];
+  price: number;
+  sale: number;
+  createdAt?: string;
+}
+
+interface ProductNew {
+  id: string;
+  name: string;
+  price: string;
+  originalPrice: string;
+  image: string;
+  hasDiscount: boolean;
+}
+
 const Index = () => {
   const [hoveredProduct, setHoveredProduct] = useState<number | null>(null);
   const [hoveredProduct2, setHoveredProduct2] = useState<number | null>(null);
@@ -45,56 +64,33 @@ const Index = () => {
   const [currentIndex2, setCurrentIndex2] = useState(0);
   const [currentSlide, setCurrentSlide] = useState<number>(0);
 
-  // Product slider data
-  const sliderProducts = [
-    {
-      id: 1,
-      name: "Áo sơ mi đẹp khỏi chê nè",
-      price: "200.000VND",
-      originalPrice: "499.000VND",
-      image: "../images/a1.jpeg",
-      hasDiscount: true,
-      sizes: ["Có gần 4 chiều"]
-    },
-    {
-      id: 2,
-      name: "Áo sơ mi đẹp khỏi chê nè",
-      price: "200.000VND",
-      originalPrice: "499.000VND", 
-      image: "../images/a1.jpeg",
-      hasDiscount: true,
-      sizes: ["Có gần 4 chiều"]
-    },
-    {
-      id: 3,
-      name: "Áo sơ mi đẹp khỏi chê nè",
-      price: "200.000VND",
-      originalPrice: "499.000VND",
-      image: "../images/a1.jpeg",
-      hasDiscount: true,
-      sizes: ["Có gần 4 chiều"]
-    },
-    {
-      id: 4,
-      name: "Áo sơ mi đẹp khỏi chê nè", 
-      price: "200.000VND",
-      originalPrice: "499.000VND",
-      image: "../images/a1.jpeg",
-      hasDiscount: true,
-      sizes: ["Có gần 2 chiều"]
-    },
-    {
-      id: 5,
-      name: "Áo sơ mi đẹp khỏi chê nè",
-      price: "200.000VND", 
-      originalPrice: "499.000VND",
-      image: "../images/a1.jpeg",
-      hasDiscount: true,
-      sizes: ["Có gần 4 chiều"]
-    }
-  ];
+ const [sliderProducts, setSliderProducts] = useState<ProductNew[]>([]);
 
-  // Suggested products data (8 products for grid display)
+useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/product/new");
+      const data: IProduct[] = await res.json();
+
+      const mapped: ProductNew[] = data.slice(0, 12).map((p) => ({
+        id: p._id,
+        name: p.name,
+        price: (p.price - p.sale).toLocaleString() + "₫",
+        originalPrice: p.sale > 0 ? p.price.toLocaleString() + "₫" : "",
+        image: p.images?.[0] || "/no-image.jpg",
+        hasDiscount: p.sale > 0,
+      }));
+
+      setSliderProducts(mapped);
+    } catch (error) {
+      console.error("Lỗi fetch sản phẩm mới:", error);
+    }
+  };
+
+  fetchProducts();
+}, []);
+
+ 
   const suggestedProducts = [
     {
       id: 1,
@@ -453,7 +449,7 @@ const Index = () => {
                   {product.hasDiscount && <div className="sale-badge">Sale</div>}
                   
                   <div className="product-image-container">
-                  <a href={`/user/product_detail/${product.id}`}>
+                  <a href={`/user/product-detail/${product.id}`}>
                     <img src={product.image} alt={product.name} className="product-image" />
                   </a>
                     {hoveredProduct === product.id && (

@@ -20,7 +20,6 @@ export async function GET(
     return NextResponse.json({ message: "Lỗi server" }, { status: 500 });
   }
 }
-
 // PUT: Cập nhật bộ sưu tập
 export async function PUT(
   req: NextRequest,

@@ -1,3 +1,4 @@
+// File: model/blogs.ts
 import mongoose from 'mongoose';
 
 const blogSchema = new mongoose.Schema({

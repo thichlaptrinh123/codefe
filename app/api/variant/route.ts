@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/lib/mongodb";
 import Variant from "@/model/variants";
-
+import "@/model/products";
 // GET: Lấy toàn bộ biến thể hoặc theo productId hoặc categoryId
 export async function GET(req: NextRequest) {
   await dbConnect();
@@ -15,18 +15,27 @@ export async function GET(req: NextRequest) {
     const filter: any = {};
     if (productId) filter.id_product = productId;
     if (categoryId) filter.id_category = categoryId;
-    const variants = await Variant.find(filter).sort({ createdAt: -1 }).lean();
+
+    const variants = await Variant.find(filter)
+    .populate("id_product", "name")
+    .sort({ createdAt: -1 })
+    .lean();
 
     const normalized = variants.map((v) => ({
       ...v,
+      productName: v.id_product?.name || "Không rõ", 
       stock_quantity: Number(v.stock_quantity) || 0,
       sold_quantity: Number(v.sold_quantity) || 0,
       price: Number(v.price) || 0,
     }));
     
+    console.log(" Kết quả trả về từ MongoDB:", normalized);
+
     return NextResponse.json(normalized);
     
   } catch (err) {
+    console.error("❌ Lỗi khi xử lý GET /api/variant:", err); // <--- thêm dòng này
+  
     return NextResponse.json(
       {
         message: "Lỗi khi lấy biến thể",
@@ -35,6 +44,7 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
+  
 }
 
 // POST: Tạo biến thể mới

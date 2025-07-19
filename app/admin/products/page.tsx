@@ -7,8 +7,8 @@ import Pagination from "../components/shared/pagination";
 import ProductModal from "../components/product/product-modal";
 import clsx from "clsx";
 import Image from "next/image";
-import Swal from "sweetalert2";
-import { toast } from "react-toastify";
+// import Swal from "sweetalert2";
+// import { toast } from "react-toastify";
 import { RawProduct } from "@/app/admin/components/product/product-types"; // hoặc đường dẫn đúng với bạn
 import { isNewProduct } from "../../../lib/date-utils";
 import ProductDetailModal from "../components/product/product-detail-modal";
@@ -216,39 +216,42 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
       <div className="bg-white rounded-md shadow p-4 space-y-4">
         <h1 className="text-lg font-semibold mb-4">Danh sách sản phẩm</h1>
 
-        <div className="hidden lg:grid grid-cols-[0.5fr_1fr_2fr_1.2fr_1fr_1fr_1fr_1fr] gap-4 px-2 py-3 bg-[#F9F9F9] rounded-md font-semibold text-gray-800 text-sm">
-          <div>Stt</div>
-          <div>Hình ảnh</div>
-          <div>Tên sản phẩm</div>
-          <div>Danh mục</div>
-          <div>Giá</div>
-          <div>Tồn kho</div>
-          <div>Trạng thái</div>
-          <div className="text-center">Thao tác</div>
-        </div>
+        <div className="hidden md:grid grid-cols-[0.5fr_1fr_2fr_1.2fr_1fr_1fr_1fr_1fr] gap-4 px-2 py-3 bg-[#F9F9F9] rounded-md font-semibold text-gray-800 text-sm">
+        <div>Stt</div>
+        <div>Hình ảnh</div>
+        <div>Tên sản phẩm</div>
+        <div>Danh mục</div>
+        <div>Giá</div>
+        <div>Tồn kho</div>
+        <div>Trạng thái</div>
+        <div className="text-center">Thao tác</div>
+      </div>
+
 
         {paginatedProducts.map((product, index) => {
           const stt = (currentPage - 1) * ITEMS_PER_PAGE + index + 1;
           return (
             <div
             key={product.id}
-            className="grid grid-cols-[0.5fr_1fr_2fr_1.2fr_1fr_1fr_1fr_1fr] gap-4 px-2 py-3 items-center border-b border-gray-200"
-          >          
+            className="hidden md:grid grid-cols-[0.5fr_1fr_2fr_1.2fr_1fr_1fr_1fr_1fr] gap-4 px-2 py-3 items-center border-b border-gray-200"
+          >       
               <div className="text-sm text-gray-700">{stt}</div>
               
-              {product.images?.length && product.images.some((img) => img.trim() !== "") ? (
-  <Image
-    src={product.images.find((img) => img.trim() !== "")!}
-    alt={product.name}
-    width={80}
-    height={80}
-    className="object-cover rounded"
-  />
-) : (
-  <div className="w-20 h-20 bg-gray-100 border border-gray-300 flex items-center justify-center text-xs text-gray-500">
-    Không có ảnh
-  </div>
-)}
+              {product.images?.length && product.images.some((img) => img?.trim() !== "") ? (
+              <div className="w-[88px] h-[88px] rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                <Image
+                  src={product.images.find((img) => img?.trim() !== "")!}
+                  alt={product.name}
+                  width={88}
+                  height={88}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            ) : (
+              <div className="w-[88px] h-[88px] rounded-xl border border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-xs text-center p-2">
+                Không có ảnh
+              </div>
+            )}
 
               {/* <div className="text-sm text-gray-700">{product.name}</div> */}
   <div className="text-sm text-gray-700 flex flex-col overflow-hidden break-words max-w-full">
@@ -285,18 +288,6 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
                 </span>
               </div>
               <div className="text-center flex justify-center gap-2">
-  {/* 👁 Nút xem chi tiết */}
-  <button
-    className="bg-blue-100 hover:bg-blue-200 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
-    onClick={() => {
-      setViewProductId(product.id);
-      setShowDetailModal(true);
-    }}
-    title="Xem chi tiết"
-  >
-    <i className="bx bx-show text-lg" />
-  </button>
-
   {/* ✏ Nút chỉnh sửa */}
   <button
       className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
@@ -320,11 +311,137 @@ const [selectedProduct, setSelectedProduct] = useState<RawProduct | null>(null);
   >
     <i className="bx bx-pencil text-lg" />
   </button>
+    {/* 👁 Nút xem chi tiết */}
+    <button
+    className="bg-blue-100 hover:bg-blue-200 text-black px-3 py-2 rounded-md transition inline-flex items-center justify-center"
+    onClick={() => {
+      setViewProductId(product.id);
+      setShowDetailModal(true);
+    }}
+    title="Xem chi tiết"
+  >
+    <i className="bx bx-show text-lg" />
+  </button>
 </div>
 
             </div>
           );
         })}
+
+        {/* Mobile view */}
+        <div className="md:hidden space-y-4 mt-4">
+  {paginatedProducts.map((product, index) => {
+    const stt = (currentPage - 1) * ITEMS_PER_PAGE + index + 1;
+
+    return (
+      <div
+        key={product.id}
+        className="border border-gray-200 rounded-xl p-4 bg-white space-y-3 shadow-sm"
+      >
+        {/* STT + Trạng thái */}
+        <div className="flex justify-between items-center">
+          <div className="text-xs text-gray-500 italic">STT: {stt}</div>
+          <span
+            className={clsx(
+              "text-xs px-2 py-1 rounded-full font-medium",
+              productStatusClass[getDisplayStatus(product)]
+            )}
+          >
+            {productStatusLabel[getDisplayStatus(product)]}
+          </span>
+        </div>
+
+        {/* Ảnh + thông tin */}
+        <div className="flex gap-3 items-start">
+          {/* Ảnh sản phẩm */}
+          <div className="w-20 h-20 rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
+            {product.images?.length && product.images.some((img) => img?.trim()) ? (
+              <Image
+                src={product.images.find((img) => img?.trim())!}
+                alt={product.name}
+                width={80}
+                height={80}
+                className="object-cover w-full h-full"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-xs text-gray-400 border border-dashed text-center p-2">
+                Không có ảnh
+              </div>
+            )}
+          </div>
+
+          {/* Nội dung */}
+          <div className="flex-1 space-y-1">
+            <div className="font-medium text-gray-800 text-sm break-words">
+              {product.name}
+            </div>
+            <div className="text-xs text-gray-600">{product.categoryName}</div>
+            <div className="text-sm text-[#960130] font-semibold">
+              {formatPrice(product.price)}
+            </div>
+
+            <div className="flex gap-1 flex-wrap mt-1">
+              {product.isNew && (
+                <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full font-medium">
+                  Mới
+                </span>
+              )}
+              {product.featuredLevel === 1 && (
+                <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
+                  Nổi bật
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Tồn kho + Hành động */}
+        <div className="flex justify-between items-center pt-2 border-t border-gray-100 text-sm text-gray-600">
+          <span>Tồn kho: {product.stock}</span>
+
+          <div className="flex gap-2">
+            <button
+              className="bg-yellow-400 hover:bg-yellow-500 text-black px-3 py-1.5 rounded-md transition inline-flex items-center justify-center"
+              onClick={() => {
+                setSelectedProduct({
+                  _id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  sale: product.discount,
+                  product_hot: product.featuredLevel,
+                  isActive: product.status === "active",
+                  description: product.description,
+                  id_category: product.category,
+                  variants: product.variants || [],
+                  images: product.images || [],
+                  stock: product.stock,
+                });
+                setShowModal(true);
+              }}
+              title="Chỉnh sửa"
+            >
+              <i className="bx bx-pencil text-lg" />
+            </button>
+
+            <button
+              className="bg-blue-100 hover:bg-blue-200 text-black px-3 py-1.5 rounded-md transition inline-flex items-center justify-center"
+              onClick={() => {
+                setViewProductId(product.id);
+                setShowDetailModal(true);
+              }}
+              title="Xem chi tiết"
+            >
+              <i className="bx bx-show text-lg" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</div>
+
+
+
       </div>
 
       <Pagination

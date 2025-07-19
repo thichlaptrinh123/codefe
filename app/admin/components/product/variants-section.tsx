@@ -1,3 +1,4 @@
+// app/admin/components/product/variant-section.tsx
 "use client";
 
 import clsx from "clsx";
@@ -43,7 +44,7 @@ export default function VariantsSection({
     const [newlyAddedVariants, setNewlyAddedVariants] = useState<
     { size: string; color: string }[]
     >([]);
-    const [visibleCount, setVisibleCount] = useState(5);
+    const [visibleCount, setVisibleCount] = useState(3);
 
 
   const removeVariant = async (index: number) => {
@@ -168,7 +169,7 @@ export default function VariantsSection({
           onClick={() => setShowBulkForm(!showBulkForm)}
           className="text-sm px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
         >
-          + Tạo nhiều biến thể
+          + Thêm biến thể
         </button>
         
       </div>
@@ -498,14 +499,14 @@ export default function VariantsSection({
   ))}
 
   {/* Nút hiển thị thêm / ẩn bớt */}
-  {form.variants && form.variants.length > 5 && (
+  {form.variants && form.variants.length > 3 && (
     <div className="text-center mt-4">
       {visibleCount < form.variants.length ? (
         <button
           type="button"
           onClick={() =>
             setVisibleCount((prev) =>
-              Math.min(prev + 5, form.variants!.length)
+              Math.min(prev + 3, form.variants!.length)
             )
           }
           className="text-sm text-[#960130] underline hover:opacity-80"
@@ -515,7 +516,7 @@ export default function VariantsSection({
       ) : (
         <button
           type="button"
-          onClick={() => setVisibleCount(5)}
+          onClick={() => setVisibleCount(3)}
           className="text-sm text-[#960130] underline hover:opacity-80"
         >
           Ẩn bớt biến thể
@@ -524,8 +525,6 @@ export default function VariantsSection({
     </div>
   )}
 </div>
-
-      
     </div>
   );
 }

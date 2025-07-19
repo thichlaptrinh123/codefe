@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { dbConnect } from "../../../../lib/mongodb";
-import Collection_product from "../../../../model/collection_product";
+import { dbConnect } from "../../../lib/mongodb";
+import Collection_product from "../../../model/collection_product";
 
 export async function GET() {
   await dbConnect();

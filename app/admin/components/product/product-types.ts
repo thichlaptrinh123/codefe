@@ -1,3 +1,4 @@
+// app/admin/components/product/product-type.ts
 export interface ProductVariant {
   id?: number | string;
   size: string;
@@ -8,9 +9,13 @@ export interface ProductVariant {
   id_category?: string;
   isBulkCreated?: boolean;
 
+  name?: string;       
+  productName?: string;    
+  isActive?: boolean;
+  productId?: string;
+
 }
 
-  
   export interface Product {
     id: string;
     name: string;

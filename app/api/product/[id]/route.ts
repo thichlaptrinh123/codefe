@@ -2,22 +2,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/lib/mongodb";
 import Product from "@/model/products";
-import Variant from "../../../../model/variants"; // ✅ Thêm dòng này
+import Variant from "../../../../model/variants"; 
+import "@/model/categories";
+
 
 
 // GET: Lấy sản phẩm theo ID và tăng viewCount
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   await dbConnect();
 
   try {
-    const productId = params.id;
+    const { id } = await context.params; 
 
     // Tăng lượt xem và lấy sản phẩm có populate loại danh mục
     const updatedProduct = await Product.findByIdAndUpdate(
-      productId,
+      id,
       { $inc: { viewCount: 1 } },
       { new: true }
     ).populate({
@@ -32,10 +34,8 @@ export async function GET(
       return NextResponse.json({ message: "Không tìm thấy sản phẩm" }, { status: 404 });
     }
 
-    // 🧩 Lấy biến thể
-    const variants = await Variant.find({ id_product: productId }).lean();
+    const variants = await Variant.find({ id_product: id }).lean();
 
-    // ✅ Trả về sản phẩm kèm biến thể
     return NextResponse.json({
       ...updatedProduct.toObject(),
       variants,

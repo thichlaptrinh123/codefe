@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 import { dbConnect } from '../../../lib/mongodb'
 import Comment from '../../../model/comments'
-
+import "../../../model/user";
+import "../../../model/products";
 
 export async function GET() {
   await dbConnect();
 
   const comments = await Comment.find()
     .populate("id_product")
-    // .populate("id_user");
+    .populate("id_user");
 
   return NextResponse.json(comments);
 }

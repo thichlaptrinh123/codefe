@@ -1,3 +1,5 @@
+
+// app/admin/components/order/order-status-over-view.tsx
 "use client";
 
 import React from "react";
@@ -12,7 +14,7 @@ const STATUS_CARDS = [
 ];
 
 interface Props {
-  data: { [status: string]: number }; // ví dụ: { pending: 3, confirmed: 5, ... }
+  data: { [status: string]: number };
 }
 
 export default function OrderStatusOverview({ data }: Props) {

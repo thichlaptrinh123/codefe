@@ -1,0 +1,66 @@
+.container-collection {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  padding: 24px 0;
+  box-sizing: border-box;
+}
+.banner-collection img{
+  width: 100%;
+  height: auto;
+}
+.brand-collection {
+  width: calc(50% - 12px); /* 2 cột với 24px gap */
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.brand-collection h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  color: #000;
+}
+
+.images-collection {
+  margin-bottom: 10px;
+  width: 100%;
+  display: block;
+}
+
+.images-collection img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+.brand-collection p {
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: justify;
+  color: #333;
+}
+
+.breadcrumb-collection {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 15px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.breadcrumb-collection a {
+  color: black;
+  text-decoration: none;
+}
+
+.breadcrumb-collection a:hover {
+  color: #B3123D;
+}

@@ -1,17 +1,40 @@
 'use client'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import '../../css_user/register.css' // nếu đang dùng chung style
+import '../../css_user/register.css'
 
 export default function OtpPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const p = searchParams.get('phone')
+    if (p) setPhone(p)
+  }, [searchParams])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: xử lý xác minh OTP ở đây nếu cần
-    router.push('/user/register/password') // điều hướng sang bước 3
+    try {
+      const res = await fetch('/api/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, otp }),
+      })
+
+      const data = await res.json()
+      if (res.ok) {
+        alert('Xác minh OTP thành công')
+        router.push('/user/register/password')
+      } else {
+        alert(data.error || 'OTP không hợp lệ')
+      }
+    } catch (error) {
+      console.error(error)
+      alert('Có lỗi khi xác minh OTP')
+    }
   }
 
   return (
@@ -23,8 +46,10 @@ export default function OtpPage() {
             type="tel"
             name="phone"
             className="input-register"
-            defaultValue="0353525020"
-            readOnly
+            placeholder="Nhập số điện thoại"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
           />
           <input
             type="text"

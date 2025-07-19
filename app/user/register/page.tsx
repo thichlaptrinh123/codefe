@@ -1,27 +1,48 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import '../css_user/register.css'    // đường dẫn CSS bạn có sẵn
+import '../css_user/register.css'
 import MaxWidthWrapper from '../components/maxWidthWrapper'
-import LINK from 'next/link' // Import LINK from next/link
+import LINK from 'next/link'
 
 export default function RegisterPage() {
   const [phone, setPhone] = useState('')
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // TODO: Gửi API OTP nếu cần
-    router.push('/user/register/otp') // điều hướng sang trang register2
+    setLoading(true)
+    try {
+      const res = await fetch('/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone }),
+      })
+
+      const data = await res.json()
+      if (res.ok) {
+        alert('OTP đã được gửi đến số điện thoại của bạn.')
+        router.push(`/user/register/otp?phone=${encodeURIComponent(phone)}`)
+      } else {
+        alert(data.error || 'Không gửi được OTP.')
+      }
+    } catch (error) {
+      console.error(error)
+      alert('Lỗi khi gửi OTP.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <main>
-          <div className="breadcrumb-register">
-     <MaxWidthWrapper>
-    <LINK href="#">Trang chủ</LINK> / <span>Bộ sưu tập</span>
-    </MaxWidthWrapper>
-  </div>
+      <div className="breadcrumb-register">
+        <MaxWidthWrapper>
+          <LINK href="#">Trang chủ</LINK> / <span>Bộ sưu tập</span>
+        </MaxWidthWrapper>
+      </div>
+
       <div className="container-register">
         <h2 className="title-register">Tạo tài khoản</h2>
         <form onSubmit={handleSubmit}>
@@ -34,8 +55,8 @@ export default function RegisterPage() {
             onChange={(e) => setPhone(e.target.value)}
             required
           />
-          <button type="submit" className="confirm-btn-register">
-            Gửi mã xác nhận
+          <button type="submit" className="confirm-btn-register" disabled={loading}>
+            {loading ? 'Đang gửi...' : 'Gửi mã xác nhận'}
           </button>
         </form>
         <div className="divider-register" />

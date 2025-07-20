@@ -1,30 +1,45 @@
 'use client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
-import  LINK  from 'next/link' 
-import '../../css_user/forgotpassword.css' // Đường dẫn tới file CSS của bạn    
+import Link from 'next/link'
+import '../../css_user/forgotpassword.css'
 import MaxWidthWrapper from '../../components/maxWidthWrapper'
 
 export default function OtpForgotPasswordPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const phoneParam = searchParams.get('phone') || ''  // lấy phone từ query (nếu có)
   const [otp, setOtp] = useState('')
-  const phone = '0353525020' // Trong thực tế, nên lấy từ state / context / params
+  const [phone] = useState(phoneParam)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // TODO: Gửi OTP lên server để xác thực
-    console.log('Xác thực OTP:', otp)
+    try {
+      const res = await fetch('/api/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, otp }),
+      })
 
-    // Nếu đúng -> chuyển trang nhập mật khẩu mới
-    router.push('/user/forgotpassword/reset')
+      const data = await res.json()
+      if (res.ok) {
+        alert('OTP hợp lệ')
+        router.push(`/user/forgotpassword/reset?phone=${phone}`)
+      } else {
+        alert(data.error || 'OTP không hợp lệ')
+      }
+    } catch (error) {
+      console.error('Lỗi xác thực OTP:', error)
+      alert('Có lỗi xảy ra, vui lòng thử lại')
+    }
   }
 
   return (
     <main>
       <div className="breadcrumb-forgotpassword">
         <MaxWidthWrapper>
-          <LINK href="/">Trang chủ</LINK> / <span>Phục hồi mật khẩu / OTP</span>
+          <Link href="/">Trang chủ</Link> / <span>Phục hồi mật khẩu / OTP</span>
         </MaxWidthWrapper>
       </div>
       <div className="form-wrapper-forgotpassword">
@@ -52,11 +67,10 @@ export default function OtpForgotPasswordPage() {
           </button>
 
           <div className="divider-forgotpassword" />
-          
           <div className="back-link-forgotpassword">
-            <LINK href="/user/forgotpassword" style={{ textDecoration: 'none' }}>
+            <Link href="/user/forgotpassword" style={{ textDecoration: 'none' }}>
               ← Quay về
-            </LINK>
+            </Link>
           </div>
         </form>
       </div>

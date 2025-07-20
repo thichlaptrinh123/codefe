@@ -1,7 +1,7 @@
     'use client';
 
 import Link from "next/link";
-import '../../css_user/account.css'; // Import the CSS file for styling
+// import '../../css_user/account.css'; // Import the CSS file for styling
 import MaxWidthWrapper from "../../../components/maxWidthWrapper"; 
 export default function ChangePasswordPage() {
   return (

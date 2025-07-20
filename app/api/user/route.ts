@@ -1,110 +1,57 @@
-// app/api/user/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { dbConnect } from "@/lib/mongodb";
 import User from "@/model/user";
-import bcrypt from "bcryptjs";
-import { convertRoleToDb } from "@/app/admin/components/user/role-utils";
-import "@/model/order";
 
-export async function GET() {
+// Lấy thông tin user theo phone (demo)
+export async function GET(req: NextRequest) {
   await dbConnect();
   try {
-    const users = await User.aggregate([
-      {
-        $lookup: {
-          from: "orders", // tên collection (đúng với MongoDB, thường là "orders")
-          localField: "_id",
-          foreignField: "id_user", // hoặc "customerId" tuỳ DB bạn
-          as: "orders",
-        },
-      },
-      {
-        $addFields: {
-          orderCount: { $size: "$orders" },
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          username: 1,
-          email: 1,
-          phone: 1,
-          address: 1,
-          role: 1,
-          status: 1,
-          orderCount: 1,
-        },
-      },
-      { $sort: { createdAt: -1 } },
-    ]);
+    // Lấy query ?phone=...
+    const { searchParams } = new URL(req.url);
+    const phone = searchParams.get("phone");
 
-    const formatted = users.map((u) => ({
-      _id: u._id,
-      name: u.username,
-      email: u.email || "",
-      phone: u.phone,
-      address: u.address || "",
-      role: u.role,
-      status: u.status === 1 ? "active" : "inactive",
-      orderCount: u.orderCount || 0,
-    }));
-
-    return NextResponse.json(formatted);
-  } catch (error) {
-    console.error("Lỗi khi lấy user:", error);
-    return NextResponse.json(
-      { message: "Lỗi khi lấy danh sách user", error },
-      { status: 500 }
-    );
-  }
-}
-
-
-// Tạo mới user
-export async function POST(req: Request) {
-  await dbConnect();
-  const body = await req.json();
-
-  try {
-    const { name, password, phone, email, role, status, address } = body;
-
-    // Kiểm tra trùng tên hoặc số điện thoại
-    const existing = await User.findOne({
-      $or: [{ username: name }, { phone }],
-    });
-
-    if (existing) {
-      const field = existing.username === name ? "Tên người dùng" : "Số điện thoại";
+    if (!phone) {
       return NextResponse.json(
-        { success: false, message: `${field} đã được sử dụng` },
-        { status: 409 }
+        { message: "Thiếu số điện thoại" },
+        { status: 400 }
       );
     }
 
-    if (!password || !password.trim()) {
-        return NextResponse.json(
-          { success: false, message: "Vui lòng nhập mật khẩu" },
-          { status: 400 }
-        );
-      }
-      const hashedPassword = await bcrypt.hash(password, 10);
-      
+    const user = await User.findOne({ phone });
+    if (!user) return NextResponse.json({ message: "User không tồn tại" }, { status: 404 });
 
-    const newUser = await User.create({
-      username: name,
-      password: hashedPassword,
-      phone,
-      email,
-      address,
-      role: convertRoleToDb(role), 
-      status: status === "active" ? 1 : 0,
+    return NextResponse.json({
+      name: user.username,
+      email: user.email || "",
+      phone: user.phone,
+      address: user.address || "",
     });
-    
-    return NextResponse.json({ success: true, user: newUser });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, message: error.message || "Lỗi tạo user" },
-      { status: 500 }
+  } catch (error) {
+    console.error("Lỗi GET user:", error);
+    return NextResponse.json({ message: "Lỗi server" }, { status: 500 });
+  }
+}
+
+// Cập nhật thông tin user
+export async function PUT(req: NextRequest) {
+  await dbConnect();
+  try {
+    const { name, email, phone, address } = await req.json();
+
+    const user = await User.findOneAndUpdate(
+      { phone },
+      { username: name, email, address },
+      { new: true }
     );
+
+    if (!user) return NextResponse.json({ message: "User không tồn tại" }, { status: 404 });
+
+    return NextResponse.json({
+      message: "Cập nhật thành công",
+      user,
+    });
+  } catch (error) {
+    console.error("Lỗi PUT user:", error);
+    return NextResponse.json({ message: "Lỗi server" }, { status: 500 });
   }
 }

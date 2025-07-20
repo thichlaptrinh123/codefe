@@ -22,7 +22,7 @@ export default function PasswordPage() {
     console.log({ fullname, password })
 
     // Điều hướng sau khi tạo thành công
-    router.push('/login') // hoặc trang chào mừng
+    router.push('/user/login') // hoặc trang chào mừng
   }
 
   return (

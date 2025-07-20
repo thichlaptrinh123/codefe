@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { dbConnect } from "../../../../lib/mongodb";
-import User from "../../../../model/users";
+import { dbConnect } from "../../../lib/mongodb";
+import User from "../../../model/user";
 //Method: POST
 //http://localhost:3000/api/reset-password
 export async function POST(req: Request) {

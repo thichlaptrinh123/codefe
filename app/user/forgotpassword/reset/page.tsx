@@ -1,16 +1,18 @@
 'use client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import Link from 'next/link'
-import '../../css_user/forgotpassword.css' // Đường dẫn tới file CSS của bạn
+import '../../css_user/forgotpassword.css'
 import React from 'react'
 
 export default function ResetPasswordPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const phone = searchParams.get('phone') || '' // lấy phone từ query
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (password !== confirmPassword) {
@@ -18,11 +20,25 @@ export default function ResetPasswordPage() {
       return
     }
 
-    // TODO: Gửi mật khẩu mới lên server
-    console.log('Mật khẩu mới:', password)
+    try {
+      const res = await fetch('/api/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, newPassword: password }),
+      })
 
-    // Xong thì chuyển sang trang login
-    router.push('/user/login')
+      const data = await res.json()
+
+      if (res.ok) {
+        alert('Đổi mật khẩu thành công!')
+        router.push('/user/login')
+      } else {
+        alert(data.error || 'Đổi mật khẩu thất bại!')
+      }
+    } catch (error) {
+      console.error('Lỗi:', error)
+      alert('Có lỗi xảy ra, vui lòng thử lại')
+    }
   }
 
   return (

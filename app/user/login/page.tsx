@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState } from 'react';
 import '../css_user/login.css';
 import Link from "next/link"; 
@@ -15,16 +14,16 @@ const LoginPage: React.FC = () => {
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, password }),
       });
 
       const data = await res.json();
       if (res.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
         alert('Đăng nhập thành công');
-        window.location.href = '/';
+        window.location.href = '/user';
       } else {
         alert(data.message || 'Đăng nhập thất bại');
       }
@@ -44,8 +43,6 @@ const LoginPage: React.FC = () => {
 
       <form className="login-card-login" onSubmit={handleLogin}>
         <h1>Đăng nhập</h1>
-
-        {/* Đăng nhập Google */}
         <button
           type="button"
           className="google-btn-login"
@@ -57,8 +54,6 @@ const LoginPage: React.FC = () => {
           />
           Đăng nhập bằng Google
         </button>
-
-        {/* Email / SĐT */}
         <div className="field-login">
           <input
             type="text"
@@ -68,8 +63,6 @@ const LoginPage: React.FC = () => {
             required
           />
         </div>
-
-        {/* Mật khẩu */}
         <div className="field-login">
           <input
             type="password"
@@ -79,18 +72,10 @@ const LoginPage: React.FC = () => {
             required
           />
         </div>
-
-        {/* Nút đăng nhập */}
-        <button type="submit" className="primary-btn-login">
-          Đăng nhập
-        </button>
-
-        {/* Quên mật khẩu */}
+        <button type="submit" className="primary-btn-login">Đăng nhập</button>
         <div className="link-row-login">
           <a href="/user/forgotpassword">Quên mật khẩu?</a>
         </div>
-
-        {/* Đường kẻ và Đăng ký */}
         <div className="separator-login" />
         <div className="signup-login">
           <Link href="/user/register">Đăng ký tài khoản</Link>

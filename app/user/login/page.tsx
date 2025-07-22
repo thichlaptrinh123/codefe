@@ -1,8 +1,9 @@
 'use client';
+
 import React, { useState } from 'react';
 import '../css_user/login.css';
-import Link from "next/link"; 
-import MaxWidthWrapper from '../components/maxWidthWrapper';
+import Link from "next/link";
+import MaxWidthWrapper from '../../components/maxWidthWrapper';
 import { signIn } from "next-auth/react";
 
 const LoginPage: React.FC = () => {
@@ -37,7 +38,7 @@ const LoginPage: React.FC = () => {
     <main>
       <div className="breadcrumb-login">
         <MaxWidthWrapper>
-          <Link href="/">Trang chủ</Link> / <span>Bộ sưu tập</span>
+          <Link href="/">Trang chủ</Link> / <span>Đăng nhập</span>
         </MaxWidthWrapper>
       </div>
 
@@ -46,7 +47,7 @@ const LoginPage: React.FC = () => {
         <button
           type="button"
           className="google-btn-login"
-          onClick={() => signIn("google", { callbackUrl: "/" })}
+          onClick={() => signIn("google", { callbackUrl: "/user" })}
         >
           <img
             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"

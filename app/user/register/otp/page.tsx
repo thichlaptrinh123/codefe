@@ -1,4 +1,5 @@
 'use client'
+
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -10,6 +11,7 @@ export default function OtpPage() {
   const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState('')
 
+  // Lấy số điện thoại từ query string
   useEffect(() => {
     const p = searchParams.get('phone')
     if (p) setPhone(p)
@@ -27,6 +29,8 @@ export default function OtpPage() {
       const data = await res.json()
       if (res.ok) {
         alert('Xác minh OTP thành công')
+        // Lưu số điện thoại vào localStorage để trang PasswordPage sử dụng
+        localStorage.setItem('phone', phone)
         router.push('/user/register/password')
       } else {
         alert(data.error || 'OTP không hợp lệ')
@@ -40,7 +44,7 @@ export default function OtpPage() {
   return (
     <main>
       <div className="container-register">
-        <h2 className="title-register">Tạo tài khoản</h2>
+        <h2 className="title-register">Xác minh OTP</h2>
         <form onSubmit={handleSubmit}>
           <input
             type="tel"

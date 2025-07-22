@@ -1,16 +1,28 @@
 'use client'
+
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import '../../css_user/register.css' // nếu đang dùng chung style
+import '../../css_user/register.css'
 
 export default function PasswordPage() {
   const router = useRouter()
   const [fullname, setFullname] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [phone, setPhone] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const savedPhone = localStorage.getItem('phone')
+    if (savedPhone) {
+      setPhone(savedPhone)
+    } else {
+      alert('Không tìm thấy số điện thoại, vui lòng quay lại đăng ký.')
+      router.push('/user/register')
+    }
+  }, [router])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (password !== confirmPassword) {
@@ -18,11 +30,30 @@ export default function PasswordPage() {
       return
     }
 
-    // TODO: gửi dữ liệu lên server để tạo tài khoản
-    console.log({ fullname, password })
+    try {
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: fullname,
+          phone,
+          password,
+          confirmPassword,
+        }),
+      })
 
-    // Điều hướng sau khi tạo thành công
-    router.push('/user/login') // hoặc trang chào mừng
+      const data = await res.json()
+      if (res.ok) {
+        alert('Tạo tài khoản thành công!')
+        localStorage.removeItem('phone') // Xoá phone sau khi dùng
+        router.push('/user/login')
+      } else {
+        alert(data.message || 'Đăng ký thất bại!')
+      }
+    } catch (error) {
+      console.error(error)
+      alert('Có lỗi xảy ra, vui lòng thử lại.')
+    }
   }
 
   return (

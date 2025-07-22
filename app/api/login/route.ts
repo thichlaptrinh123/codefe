@@ -1,9 +1,9 @@
-// app/api/login/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { dbConnect } from "@/lib/mongodb";
 import User from "@/model/user";
+import { normalizePhone } from "@/lib/normalizePhone";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret_here";
 
@@ -19,7 +19,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = await User.findOne({ phone });
+    const formattedPhone = normalizePhone(phone);
+    const user = await User.findOne({ phone: formattedPhone });
+
     if (!user) {
       return NextResponse.json(
         { message: "Thông tin đăng nhập không đúng" },
@@ -34,6 +36,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!user.password) {
+      return NextResponse.json(
+        { message: "Tài khoản này không có mật khẩu, vui lòng đăng nhập bằng Google" },
+        { status: 400 }
+      );
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return NextResponse.json(
@@ -42,15 +51,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Tạo JWT
     const token = jwt.sign(
-      { id: user._id, username: user.username, phone: user.phone },
+      { id: user._id, username: user.username, phone: user.phone, role: user.role },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
 
     const { password: _, ...userInfo } = user.toObject();
-
     return NextResponse.json({
       message: "Đăng nhập thành công",
       user: userInfo,

@@ -4,21 +4,51 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import MaxWidthWrapper from '../../components/maxWidthWrapper';
 import { useRouter } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
+
+interface UserType {
+  username: string;
+  email: string;
+  phone: string;
+  address: string;
+}
+
+interface TokenPayload {
+  id: string;
+  exp?: number;
+}
 
 export default function AccountPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState({
+  const [userId, setUserId] = useState<string | null>(null);
+  const [user, setUser] = useState<UserType>({
     username: '',
     email: '',
     phone: '',
-    address: ''
+    address: '',
   });
 
-  const userId = 'YOUR_USER_ID'; // TODO: Lấy từ session/token
+  // Lấy userId từ token
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/user/login');
+      return;
+    }
+    try {
+      const decoded = jwtDecode<TokenPayload>(token);
+      setUserId(decoded.id);
+    } catch (err) {
+      console.error('Token không hợp lệ:', err);
+      router.push('/user/login');
+    }
+  }, [router]);
 
   // Fetch user info
   useEffect(() => {
+    if (!userId) return;
+
     const fetchUser = async () => {
       try {
         const res = await fetch(`/api/user/${userId}`);
@@ -26,7 +56,7 @@ export default function AccountPage() {
         if (data.success) {
           setUser(data.user);
         } else {
-          alert(data.message);
+          alert(data.message || 'Không tìm thấy người dùng');
         }
       } catch (error) {
         console.error('Lỗi fetch user:', error);
@@ -39,6 +69,7 @@ export default function AccountPage() {
 
   // Update user info
   const handleUpdate = async () => {
+    if (!userId) return;
     try {
       const res = await fetch(`/api/user/${userId}`, {
         method: 'PUT',

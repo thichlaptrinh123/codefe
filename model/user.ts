@@ -5,12 +5,12 @@ const UserSchema = new mongoose.Schema(
     username: { type: String },
     password: { type: String },
     phone: { type: String, unique: true, sparse: true },
-    email: { type: String, required: false }, // Đặt required: false
+    email: { type: String, required: false },
     address: { type: String },
     role: {
       type: String,
       enum: ["admin", "product-manager", "order-manager", "post-manager", "customer"],
-      default: "customer",  // default hợp lệ
+      default: "customer",
     },
     provider: { type: String, default: "credentials" },
     providerId: { type: String },

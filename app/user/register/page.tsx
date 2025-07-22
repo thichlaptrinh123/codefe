@@ -1,9 +1,10 @@
 'use client'
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import '../css_user/register.css'
 import MaxWidthWrapper from '../components/maxWidthWrapper'
-import LINK from 'next/link'
+import Link from 'next/link'
 
 export default function RegisterPage() {
   const [phone, setPhone] = useState('')
@@ -13,6 +14,7 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+
     try {
       const res = await fetch('/api/send-otp', {
         method: 'POST',
@@ -23,6 +25,7 @@ export default function RegisterPage() {
       const data = await res.json()
       if (res.ok) {
         alert('OTP đã được gửi đến số điện thoại của bạn.')
+        // Điều hướng sang trang OTP và truyền phone qua query
         router.push(`/user/register/otp?phone=${encodeURIComponent(phone)}`)
       } else {
         alert(data.error || 'Không gửi được OTP.')
@@ -39,7 +42,7 @@ export default function RegisterPage() {
     <main>
       <div className="breadcrumb-register">
         <MaxWidthWrapper>
-          <LINK href="#">Trang chủ</LINK> / <span>Bộ sưu tập</span>
+          <Link href="/">Trang chủ</Link> / <span>Đăng ký</span>
         </MaxWidthWrapper>
       </div>
 
@@ -60,9 +63,9 @@ export default function RegisterPage() {
           </button>
         </form>
         <div className="divider-register" />
-        <LINK href="/user/login" className="back-link-register">
-          <span className="arrow-left-register">←</span> Quay về
-        </LINK>
+        <Link href="/user/login" className="back-link-register">
+          <span className="arrow-left-register">←</span> Quay về đăng nhập
+        </Link>
       </div>
     </main>
   )

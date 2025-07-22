@@ -1,0 +1,180 @@
+/* BREADCRUMB */
+.breadcrumb {
+    background-color: #f8f9fa;
+    padding: 15px 0;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #e9ecef;
+  }
+  .breadcrumb a {
+    color: #6c757d;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  .breadcrumb a:hover {
+    color: #8B2635;
+  }
+  .breadcrumb span {
+    color: #8B2635;
+    font-weight: 500;
+  }
+  
+  /* CONTAINER ACCOUNT */
+  .container-account {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 40px;
+    margin-bottom: 60px;
+  }
+  
+  /* SIDEBAR */
+  .sidebar-account {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 25px 20px;
+    height: fit-content;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  .heading-divider {
+    color: #8B2635;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #8B2635;
+  }
+  .menu-account {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .menu-left {
+    margin-bottom: 8px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+  .menu-left a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    color: #495057;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .menu-left a:hover {
+    color: #8B2635;
+  }
+  
+  /* ACCOUNT INFORMATION */
+  .content-accountInformation {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  .address-box-accountInformation {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .address-header-accountInformation {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .address-information-accountInformation {
+    color: #8B2635;
+    font-weight: 500;
+  }
+  .icons-accountInformation button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 8px;
+    color: #6c757d;
+  }
+  .icons-accountInformation button:hover {
+    color: #8B2635;
+  }
+  .add-address-information-accountInformation {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background-color: #8B2635;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  /* CHANGE PASSWORD */
+  .form-changepassword {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  .form-title-changepassword {
+    color: #8B2635;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #8B2635;
+  }
+  .label-changepassword {
+    display: block;
+    color: #495057;
+    font-weight: 500;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .input-changepassword {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .input-changepassword:focus {
+    border-color: #8B2635;
+    box-shadow: 0 0 0 3px rgba(139, 38, 53, 0.1);
+  }
+  .form-buttons-changepassword {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 25px;
+  }
+  .cancel-changepassword,
+  .save-changepassword {
+    padding: 12px 24px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  .cancel-changepassword {
+    background-color: #6c757d;
+    color: white;
+  }
+  .cancel-changepassword:hover {
+    background-color: #5a6268;
+  }
+  .save-changepassword {
+    background-color: #8B2635;
+    color: white;
+  }
+  .save-changepassword:hover {
+    background-color: #7a1f2d;
+  }
+  

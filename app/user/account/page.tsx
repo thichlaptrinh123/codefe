@@ -5,6 +5,7 @@ import Link from 'next/link';
 import MaxWidthWrapper from '../../components/maxWidthWrapper';
 import { useRouter } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
+import styles from './page.module.css';
 
 interface UserType {
   username: string;
@@ -93,39 +94,39 @@ export default function AccountPage() {
 
   return (
     <>
-      <div className="breadcrumb">
+      <div className={styles.breadcrumb}>
         <MaxWidthWrapper>
           <Link href="/">Trang chủ</Link> / <span>Tài khoản</span>
         </MaxWidthWrapper>
       </div>
 
-      <div className="container-account">
+      <div className={styles['container-account']}>
         {/* Sidebar */}
-        <div className="sidebar-account">
-          <h3 className="heading-divider">Tài khoản của bạn</h3>
-          <ul className="menu-account">
-            <li className="menu-left">
+        <div className={styles['sidebar-account']}>
+          <h3 className={styles['heading-divider']}>Tài khoản của bạn</h3>
+          <ul className={styles['menu-account']}>
+            <li className={styles['menu-left']}>
               <Link href="/user/account"><i className="fa-regular fa-user"></i> Thông tin</Link>
             </li>
-            <li className="menu-left">
+            <li className={styles['menu-left']}>
               <Link href="/user/accountoder"><i className="fas fa-box"></i> Lịch sử đơn hàng</Link>
             </li>
-            <li className="menu-left">
-              <Link href="/user/accountInformation"><i className="fas fa-map-marker-alt"></i> Địa chỉ</Link>
+            <li className={styles['menu-left']}>
+              <Link href="/user/information"><i className="fas fa-map-marker-alt"></i> Địa chỉ</Link>
             </li>
-            <li className="menu-left">
-              <Link href="/user/accountchangepassword"><i className="fas fa-lock"></i> Đổi mật khẩu</Link>
+            <li className={styles['menu-left']}>
+              <Link href="/user/account/changepassword"><i className="fas fa-lock"></i> Đổi mật khẩu</Link>
             </li>
-            <li className="menu-left">
+            <li className={styles['menu-left']}>
               <Link href="/logout"><i className="fas fa-right-from-bracket"></i> Đăng xuất</Link>
             </li>
           </ul>
         </div>
 
         {/* Content */}
-        <div className="content-account">
+        <div className={styles['content-account']}>
           <h2>Thông tin tài khoản</h2>
-          <div className="form-group-account">
+          <div className={styles['form-group-account']}>
             <label>Họ và tên</label>
             <input
               type="text"
@@ -133,7 +134,7 @@ export default function AccountPage() {
               onChange={(e) => setUser({ ...user, username: e.target.value })}
             />
           </div>
-          <div className="form-group-account">
+          <div className={styles['form-group-account']}>
             <label>Email</label>
             <input
               type="email"
@@ -141,7 +142,7 @@ export default function AccountPage() {
               onChange={(e) => setUser({ ...user, email: e.target.value })}
             />
           </div>
-          <div className="form-group-account">
+          <div className={styles['form-group-account']}>
             <label>Số điện thoại</label>
             <input
               type="text"
@@ -149,7 +150,7 @@ export default function AccountPage() {
               onChange={(e) => setUser({ ...user, phone: e.target.value })}
             />
           </div>
-          <div className="form-group-account">
+          <div className={styles['form-group-account']}>
             <label>Địa chỉ</label>
             <input
               type="text"
@@ -157,7 +158,7 @@ export default function AccountPage() {
               onChange={(e) => setUser({ ...user, address: e.target.value })}
             />
           </div>
-          <button className="btn-update-account" onClick={handleUpdate}>
+          <button className={styles['btn-update-account']} onClick={handleUpdate}>
             Cập nhật
           </button>
         </div>

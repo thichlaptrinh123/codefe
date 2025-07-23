@@ -1,6 +1,6 @@
 'use client'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import '../../css_user/forgotpassword.css'
 import React from 'react'
@@ -8,18 +8,39 @@ import React from 'react'
 export default function ResetPasswordPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const phone = searchParams.get('phone') || '' // lấy phone từ query
+  const phone = searchParams.get('phone') || ''
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (!phone) {
+      alert('Thiếu số điện thoại. Vui lòng thực hiện lại quy trình khôi phục.')
+      router.push('/user/forgotpassword')
+    }
+  }, [phone, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Kiểm tra độ dài mật khẩu
+    if (password.length < 6) {
+      alert('Mật khẩu phải ít nhất 6 ký tự.')
+      return
+    }
+
+    // Kiểm tra mật khẩu phải có ít nhất một chữ cái
+    if (!/[a-zA-Z]/.test(password)) {
+      alert('Mật khẩu phải chứa ít nhất một chữ cái.')
+      return
+    }
 
     if (password !== confirmPassword) {
       alert('Mật khẩu không khớp!')
       return
     }
 
+    setLoading(true)
     try {
       const res = await fetch('/api/reset-password', {
         method: 'POST',
@@ -36,8 +57,10 @@ export default function ResetPasswordPage() {
         alert(data.error || 'Đổi mật khẩu thất bại!')
       }
     } catch (error) {
-      console.error('Lỗi:', error)
-      alert('Có lỗi xảy ra, vui lòng thử lại')
+      console.error('Lỗi khi đổi mật khẩu:', error)
+      alert('Có lỗi xảy ra, vui lòng thử lại.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -68,8 +91,8 @@ export default function ResetPasswordPage() {
             required
           />
 
-          <button type="submit" className="button-forgotpassword">
-            Lưu
+          <button type="submit" className="button-forgotpassword" disabled={loading}>
+            {loading ? 'Đang lưu...' : 'Lưu'}
           </button>
 
           <div className="divider-forgotpassword" />

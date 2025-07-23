@@ -9,10 +9,18 @@ import React from 'react'
 export default function ForgotPasswordPage() {
   const router = useRouter()
   const [phone, setPhone] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    // Kiểm tra số điện thoại cơ bản
+    if (!/^(0|\+84)\d{9}$/.test(phone)) {
+      alert('Số điện thoại không hợp lệ!')
+      return
+    }
+
+    setLoading(true)
     try {
       const res = await fetch('/api/send-otp', {
         method: 'POST',
@@ -24,13 +32,15 @@ export default function ForgotPasswordPage() {
 
       if (res.ok) {
         alert('Mã OTP đã được gửi đến số điện thoại của bạn')
-        router.push(`/user/forgotpassword/otp?phone=${phone}`)
+        router.push(`/user/forgotpassword/otp?phone=${encodeURIComponent(phone)}`)
       } else {
         alert(data.error || 'Không thể gửi mã OTP, vui lòng thử lại')
       }
     } catch (error) {
       console.error('Lỗi gửi OTP:', error)
-      alert('Có lỗi xảy ra, vui lòng thử lại')
+      alert('Không thể kết nối server, vui lòng thử lại.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -52,8 +62,8 @@ export default function ForgotPasswordPage() {
             onChange={(e) => setPhone(e.target.value)}
             required
           />
-          <button type="submit" className="button-forgotpassword">
-            Gửi mã xác nhận
+          <button type="submit" className="button-forgotpassword" disabled={loading}>
+            {loading ? 'Đang gửi...' : 'Gửi mã xác nhận'}
           </button>
           <div className="divider-forgotpassword" />
           <div className="back-link-forgotpassword">

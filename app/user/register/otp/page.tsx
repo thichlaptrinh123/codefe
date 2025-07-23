@@ -10,6 +10,8 @@ export default function OtpPage() {
   const searchParams = useSearchParams()
   const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   // Lấy số điện thoại từ query string
   useEffect(() => {
@@ -19,6 +21,9 @@ export default function OtpPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setLoading(true)
+    setError(null)
+
     try {
       const res = await fetch('/api/verify-otp', {
         method: 'POST',
@@ -29,15 +34,16 @@ export default function OtpPage() {
       const data = await res.json()
       if (res.ok) {
         alert('Xác minh OTP thành công')
-        // Lưu số điện thoại vào localStorage để trang PasswordPage sử dụng
         localStorage.setItem('phone', phone)
         router.push('/user/register/password')
       } else {
-        alert(data.error || 'OTP không hợp lệ')
+        setError(data.error || 'OTP không hợp lệ')
       }
-    } catch (error) {
-      console.error(error)
-      alert('Có lỗi khi xác minh OTP')
+    } catch (err) {
+      console.error(err)
+      setError('Có lỗi khi xác minh OTP')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -45,6 +51,7 @@ export default function OtpPage() {
     <main>
       <div className="container-register">
         <h2 className="title-register">Xác minh OTP</h2>
+        {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
         <form onSubmit={handleSubmit}>
           <input
             type="tel"
@@ -64,8 +71,8 @@ export default function OtpPage() {
             onChange={(e) => setOtp(e.target.value)}
             required
           />
-          <button type="submit" className="confirm-btn-register">
-            Xác thực mã OTP
+          <button type="submit" className="confirm-btn-register" disabled={loading}>
+            {loading ? 'Đang xác thực...' : 'Xác thực mã OTP'}
           </button>
         </form>
         <div className="divider-register" />

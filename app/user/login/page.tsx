@@ -9,9 +9,24 @@ import { signIn } from "next-auth/react";
 const LoginPage: React.FC = () => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate dữ liệu
+    if (!phone || !password) {
+      alert('Vui lòng nhập đầy đủ số điện thoại và mật khẩu');
+      return;
+    }
+
+    const phoneRegex = /^0\d{9}$/;
+    if (!phoneRegex.test(phone)) {
+      alert('Số điện thoại không hợp lệ (phải có 10 số, bắt đầu bằng 0)');
+      return;
+    }
+
+    setLoading(true);
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
@@ -29,8 +44,10 @@ const LoginPage: React.FC = () => {
         alert(data.message || 'Đăng nhập thất bại');
       }
     } catch (error) {
-      console.error(error);
-      alert('Có lỗi xảy ra, vui lòng thử lại');
+      console.error('Lỗi khi đăng nhập:', error);
+      alert('Không thể kết nối tới server, vui lòng thử lại');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -44,10 +61,13 @@ const LoginPage: React.FC = () => {
 
       <form className="login-card-login" onSubmit={handleLogin}>
         <h1>Đăng nhập</h1>
+
+        {/* Google Login */}
         <button
           type="button"
           className="google-btn-login"
           onClick={() => signIn("google", { callbackUrl: "/user" })}
+          disabled={loading}
         >
           <img
             src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -55,15 +75,19 @@ const LoginPage: React.FC = () => {
           />
           Đăng nhập bằng Google
         </button>
+
+        {/* Phone Input */}
         <div className="field-login">
           <input
-            type="text"
+            type="tel"
             placeholder="Số điện thoại"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             required
           />
         </div>
+
+        {/* Password Input */}
         <div className="field-login">
           <input
             type="password"
@@ -73,11 +97,18 @@ const LoginPage: React.FC = () => {
             required
           />
         </div>
-        <button type="submit" className="primary-btn-login">Đăng nhập</button>
+
+        {/* Submit Button */}
+        <button type="submit" className="primary-btn-login" disabled={loading}>
+          {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+        </button>
+
         <div className="link-row-login">
           <a href="/user/forgotpassword">Quên mật khẩu?</a>
         </div>
+
         <div className="separator-login" />
+
         <div className="signup-login">
           <Link href="/user/register">Đăng ký tài khoản</Link>
         </div>

@@ -112,7 +112,7 @@ export default function AccountPage() {
               <Link href="/user/accountoder"><i className="fas fa-box"></i> Lịch sử đơn hàng</Link>
             </li>
             <li className={styles['menu-left']}>
-              <Link href="/user/information"><i className="fas fa-map-marker-alt"></i> Địa chỉ</Link>
+              <Link href="/user/account/information"><i className="fas fa-map-marker-alt"></i> Địa chỉ</Link>
             </li>
             <li className={styles['menu-left']}>
               <Link href="/user/account/changepassword"><i className="fas fa-lock"></i> Đổi mật khẩu</Link>

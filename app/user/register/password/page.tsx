@@ -11,6 +11,8 @@ export default function PasswordPage() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [phone, setPhone] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const savedPhone = localStorage.getItem('phone')
@@ -24,12 +26,22 @@ export default function PasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setError(null)
 
+    if (!fullname.trim()) {
+      setError('Vui lòng nhập họ và tên.')
+      return
+    }
+    if (password.length < 6) {
+      setError('Mật khẩu phải ít nhất 6 ký tự.')
+      return
+    }
     if (password !== confirmPassword) {
-      alert('Mật khẩu không khớp!')
+      setError('Mật khẩu nhập lại không khớp.')
       return
     }
 
+    setLoading(true)
     try {
       const res = await fetch('/api/register', {
         method: 'POST',
@@ -45,14 +57,16 @@ export default function PasswordPage() {
       const data = await res.json()
       if (res.ok) {
         alert('Tạo tài khoản thành công!')
-        localStorage.removeItem('phone') // Xoá phone sau khi dùng
+        localStorage.removeItem('phone')
         router.push('/user/login')
       } else {
-        alert(data.message || 'Đăng ký thất bại!')
+        setError(data.message || 'Đăng ký thất bại!')
       }
     } catch (error) {
       console.error(error)
-      alert('Có lỗi xảy ra, vui lòng thử lại.')
+      setError('Có lỗi xảy ra, vui lòng thử lại.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -60,6 +74,7 @@ export default function PasswordPage() {
     <main>
       <div className="container-register">
         <h2 className="title-register">Tạo tài khoản</h2>
+        {error && <p style={{ color: 'red', marginBottom: '10px' }}>{error}</p>}
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -74,7 +89,7 @@ export default function PasswordPage() {
             type="password"
             name="password"
             className="input-register"
-            placeholder="Mật khẩu"
+            placeholder="Mật khẩu (≥ 6 ký tự)"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -88,8 +103,12 @@ export default function PasswordPage() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
-          <button type="submit" className="confirm-btn-register">
-            Lưu
+          <button
+            type="submit"
+            className="confirm-btn-register"
+            disabled={loading}
+          >
+            {loading ? 'Đang lưu...' : 'Lưu'}
           </button>
         </form>
         <div className="divider-register" />

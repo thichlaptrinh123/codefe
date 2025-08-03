@@ -1,7 +1,6 @@
 "use client";
-// app/layout.tsx hoặc app/(site)/layout.tsx
-import HEADER from "./components/header";
-import Footer from "./components/footer";
+import HEADER from "../components/header";
+import Footer from "../components/footer"; // ✅ đúng đường dẫn
 import { usePathname } from "next/navigation";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -14,7 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {!hideHeader && <HEADER />}
         {children}
-        <Footer />/
+        <Footer /> {/* ✅ đã sửa dấu / thừa */}
       </body>
     </html>
   );

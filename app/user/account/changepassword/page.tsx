@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import MaxWidthWrapper from '../../components/maxWidthWrapper';
+import MaxWidthWrapper from '../../../components/maxWidthWrapper';
 
 export default function ChangePasswordPage() {
   const [currentPassword, setCurrentPassword] = useState('');

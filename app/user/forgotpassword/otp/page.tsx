@@ -3,7 +3,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import '../../css_user/forgotpassword.css'
-import MaxWidthWrapper from '../../components/maxWidthWrapper'
+import MaxWidthWrapper from '../../../components/maxWidthWrapper'
 
 export default function OtpForgotPasswordPage() {
   const router = useRouter()

@@ -3,16 +3,14 @@ import mongoose from "mongoose";
 import { dbConnect } from "@/lib/mongodb";
 import User from "@/model/user";
 
-// Lấy thông tin user theo id
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
     await dbConnect();
-    const { id } = params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    const url = new URL(request.url);
+    const id = url.pathname.split("/").pop(); // Lấy id từ URL
+
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, message: "ID không hợp lệ" },
         { status: 400 }
@@ -20,6 +18,7 @@ export async function GET(
     }
 
     const user = await User.findById(id).select("-password");
+
     if (!user) {
       return NextResponse.json(
         { success: false, message: "Không tìm thấy người dùng" },
@@ -37,16 +36,14 @@ export async function GET(
   }
 }
 
-// Cập nhật thông tin user theo id
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest) {
   try {
     await dbConnect();
-    const { id } = params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    const url = new URL(request.url);
+    const id = url.pathname.split("/").pop(); // Lấy id từ URL
+
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { success: false, message: "ID không hợp lệ" },
         { status: 400 }

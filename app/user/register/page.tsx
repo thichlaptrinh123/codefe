@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import '../css_user/register.css'
-import MaxWidthWrapper from '../components/maxWidthWrapper'
+import MaxWidthWrapper from '../../components/maxWidthWrapper'
 import Link from 'next/link'
 
 export default function RegisterPage() {

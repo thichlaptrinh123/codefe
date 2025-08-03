@@ -4,9 +4,9 @@ import React, { useState, useEffect, JSX } from 'react';
 import '../css_user/banner.css';
 import '../css_user/boxcate.css';
 import '../css_user/main.css';
-import '../type/banner';
+// import '../type/banner';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
-import MaxWidthWrapper from '../components/maxWidthWrapper';
+import MaxWidthWrapper from '../../components/maxWidthWrapper';
 interface SlideData {
   id: number;
   category: string;

@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import Link from 'next/link'
 import '../css_user/forgotpassword.css'
-import MaxWidthWrapper from '../components/maxWidthWrapper'
+import MaxWidthWrapper from '../../components/maxWidthWrapper'
 import React from 'react'
 
 export default function ForgotPasswordPage() {

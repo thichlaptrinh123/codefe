@@ -3,7 +3,7 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; 
-import "./admin/styles/admin.css";
+// import "./admin/styles/admin.css";
 import 'boxicons/css/boxicons.min.css';
 
 const roboto = Roboto({

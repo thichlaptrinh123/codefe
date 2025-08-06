@@ -19,6 +19,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
+
+
     const formattedPhone = normalizePhone(phone);
     const user = await User.findOne({ phone: formattedPhone });
 
@@ -28,6 +30,7 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
+
 
     if (user.status === 0) {
       return NextResponse.json(
@@ -57,14 +60,22 @@ export async function POST(request: NextRequest) {
       { expiresIn: "7d" }
     );
 
+
+
     const { password: _, ...userInfo } = user.toObject();
     return NextResponse.json({
       message: "Đăng nhập thành công",
       user: userInfo,
       token,
     });
+
+    
+
+
   } catch (error) {
     console.error("Lỗi đăng nhập:", error);
     return NextResponse.json({ message: "Có lỗi xảy ra" }, { status: 500 });
   }
+
+  
 }

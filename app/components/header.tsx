@@ -1,14 +1,20 @@
 'use client';
 import { ChevronDown, Heart, Menu, Search, ShoppingCart, User } from "lucide-react";
 import "../user_css/header.css";
+import { useCartStore } from '@/store/cartStore';
 const Header = () => {
+  const cartItems = useCartStore((state) => state.items);
+  const totalProducts = cartItems.reduce((total, item) => total + item.quantity, 0);
   return (
     <header className="header">
       <div className="header-container">
         {/* Logo */}
+        <a href="/user">
         <div className="logo">
           <img src="/images/logo.png" alt="AURA Store" className="logo-image" />
         </div>
+        </a>
+        
 
         {/* Search Bar */}
         <div className="search-container">
@@ -24,21 +30,24 @@ const Header = () => {
 
         {/* User Actions */}
         <div className="user-actions">
-          <div className="user-account">
+          <a href="/user/account">
+            <div className="user-account">
             <User size={20} />
             <span>TÀI KHOẢN</span>
           </div>
+          </a>
+          
           
           <div className="wishlist">
             <Heart size={20} />
             <span>YÊU THÍCH</span>
             <span className="badge">0</span>
           </div>
-          <a href="/user/cart">
+           <a href="/user/cart">
             <div className="cart">
               <ShoppingCart size={20} />
               <span>GIỎ HÀNG</span>
-              <span className="badge">0</span>
+              <span className="badge">{totalProducts}</span>
             </div>
           </a>
         </div>

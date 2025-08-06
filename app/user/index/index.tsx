@@ -4,9 +4,10 @@ import React, { useState, useEffect, JSX } from 'react';
 import '../css_user/banner.css';
 import '../css_user/boxcate.css';
 import '../css_user/main.css';
-// import '../type/banner';
+import '../type/banner';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
-import MaxWidthWrapper from '../../components/maxWidthWrapper';
+import MaxWidthWrapper from '../components/maxWidthWrapper';
+
 interface SlideData {
   id: number;
   category: string;
@@ -449,7 +450,7 @@ useEffect(() => {
                   
                   <div className="product-image-container">
                   <a href={`/user/product-detail/${product.id}`}>
-                    <img src={product.image} alt={product.name} className="product-image" />
+                    <img src={product.image} alt={product.name} className="product-image w-[90%] h-[180px] object-cover mx-auto rounded" />
                   </a>
                     {hoveredProduct === product.id && (
                       <button className="favorite-btn">
@@ -457,15 +458,6 @@ useEffect(() => {
                       </button>
                     )}
                   </div>
-
-                  {hoveredProduct === product.id && (
-                    <div className="hover-overlay">
-                      <button className="add-to-cart-btn">
-                        Thêm vào giỏ hàng
-                      </button>
-                    </div>
-                  )}
-
                   <div className="product-details">
                     <h3 className="product-name">{product.name}</h3>
                     <div className="price-container">

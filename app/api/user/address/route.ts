@@ -1,206 +1,150 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { dbConnect } from "@/lib/mongodb";
 import User from "@/model/user";
-import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
+import { NextRequest, NextResponse } from "next/server";
 
-// GET - Lấy danh sách địa chỉ
+// GET: Lấy danh sách địa chỉ
 export async function GET(request: NextRequest) {
+  await dbConnect();
+
   try {
-    await dbConnect();
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId");
 
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ success: false, message: 'Token không hợp lệ' }, { status: 401 });
+    if (!userId) {
+      return NextResponse.json({ success: false, message: "Thiếu userId" }, { status: 400 });
     }
 
-    const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
-    const userId = decoded.userId;
-
-    const user = await User.findById(userId).select('address');
+    const user = await User.findById(userId);
     if (!user) {
-      return NextResponse.json({ success: false, message: 'Không tìm thấy người dùng' }, { status: 404 });
+      return NextResponse.json({ success: false, message: "Không tìm thấy người dùng" }, { status: 404 });
     }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Lấy danh sách địa chỉ thành công',
-      data: user.address || []
-    });
-
+    return NextResponse.json({ success: true, addresses: user.address || [] }, { status: 200 });
   } catch (error: any) {
-    console.error('GET /api/user/address error:', error);
-    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-      return NextResponse.json({ success: false, message: 'Token không hợp lệ hoặc đã hết hạn' }, { status: 401 });
-    }
-    return NextResponse.json({ success: false, message: 'Lỗi server nội bộ' }, { status: 500 });
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }
 
-// POST - Thêm địa chỉ mới
+// POST: Thêm địa chỉ
 export async function POST(request: NextRequest) {
-  try {
-    await dbConnect();
+  await dbConnect();
 
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ success: false, message: 'Token không hợp lệ' }, { status: 401 });
+  try {
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId");
+
+    if (!userId) {
+      return NextResponse.json({ success: false, message: "Thiếu userId" }, { status: 400 });
     }
 
-    const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
-    const userId = decoded.userId;
+    const { fullName, phone, address, isDefault } = await request.json();
 
-    const body = await request.json();
-    const { fullName, phone, province, street, isDefault } = body;
+    const user = await User.findById(userId);
+    if (!user) {
+      return NextResponse.json({ success: false, message: "Không tìm thấy người dùng" }, { status: 404 });
+    }
 
-    if (!fullName || !phone) {
-      return NextResponse.json({ success: false, message: 'Họ tên và số điện thoại là bắt buộc' }, { status: 400 });
+    if (!user.address) user.address = [];
+
+    if (isDefault) {
+      user.address = user.address.map((addr: any) => ({ ...addr.toObject(), isDefault: false }));
     }
 
     const newAddress = {
-      _id: new mongoose.Types.ObjectId(),
+      _id: new Date().getTime().toString(),
       fullName,
       phone,
-      province: province || '',
-      street: street || '',
-      isDefault: Boolean(isDefault)
+      address, // <-- Chỉ 1 dòng địa chỉ
+      isDefault: isDefault || user.address.length === 0
     };
 
-    if (newAddress.isDefault) {
-      await User.findByIdAndUpdate(userId, {
-        $set: { "address.$[].isDefault": false }
-      });
-    }
+    user.address.push(newAddress);
+    await user.save();
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { $push: { address: newAddress } },
-      { new: true, runValidators: true }
-    ).select('address');
-
-    if (!updatedUser) {
-      return NextResponse.json({ success: false, message: 'Không tìm thấy người dùng' }, { status: 404 });
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: 'Thêm địa chỉ thành công',
-      data: updatedUser.address
-    });
-
+    return NextResponse.json({ success: true, message: "Thêm địa chỉ thành công", address: newAddress }, { status: 201 });
   } catch (error: any) {
-    console.error('POST /api/user/address error:', error);
-    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-      return NextResponse.json({ success: false, message: 'Token không hợp lệ hoặc đã hết hạn' }, { status: 401 });
-    }
-    return NextResponse.json({ success: false, message: 'Lỗi server nội bộ' }, { status: 500 });
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }
 
-// PUT - Cập nhật địa chỉ
+// PUT: Cập nhật địa chỉ
 export async function PUT(request: NextRequest) {
-  try {
-    await dbConnect();
+  await dbConnect();
 
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ success: false, message: 'Token không hợp lệ' }, { status: 401 });
+  try {
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("userId");
+
+    if (!userId) {
+      return NextResponse.json({ success: false, message: "Thiếu userId" }, { status: 400 });
     }
 
-    const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
-    const userId = decoded.userId;
+    const { addressId, fullName, phone, address, isDefault } = await request.json();
 
-    const body = await request.json();
-    const { addressId, fullName, phone, province, street, isDefault } = body;
+    const user = await User.findById(userId);
+    if (!user) {
+      return NextResponse.json({ success: false, message: "Không tìm thấy người dùng" }, { status: 404 });
+    }
 
-    if (!addressId) {
-      return NextResponse.json({ success: false, message: 'ID địa chỉ là bắt buộc' }, { status: 400 });
+    const index = user.address.findIndex((addr: any) => addr._id === addressId);
+    if (index === -1) {
+      return NextResponse.json({ success: false, message: "Không tìm thấy địa chỉ" }, { status: 404 });
     }
 
     if (isDefault) {
-      await User.findByIdAndUpdate(userId, {
-        $set: { "address.$[].isDefault": false }
-      });
+      user.address = user.address.map((addr: any) => ({ ...addr.toObject(), isDefault: false }));
     }
 
-    const updatedUser = await User.findOneAndUpdate(
-      { _id: userId, "address._id": addressId },
-      {
-        $set: {
-          "address.$.fullName": fullName || '',
-          "address.$.phone": phone || '',
-          "address.$.province": province || '',
-          "address.$.street": street || '',
-          "address.$.isDefault": Boolean(isDefault)
-        }
-      },
-      { new: true, runValidators: true }
-    ).select('address');
+    user.address[index] = {
+      ...user.address[index].toObject(),
+      fullName,
+      phone,
+      address,
+      isDefault
+    };
 
-    if (!updatedUser) {
-      return NextResponse.json({ success: false, message: 'Không tìm thấy địa chỉ' }, { status: 404 });
-    }
+    await user.save();
 
-    return NextResponse.json({
-      success: true,
-      message: 'Cập nhật địa chỉ thành công',
-      data: updatedUser.address
-    });
-
+    return NextResponse.json({ success: true, message: "Cập nhật địa chỉ thành công", address: user.address[index] }, { status: 200 });
   } catch (error: any) {
-    console.error('PUT /api/user/address error:', error);
-    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-      return NextResponse.json({ success: false, message: 'Token không hợp lệ hoặc đã hết hạn' }, { status: 401 });
-    }
-    return NextResponse.json({ success: false, message: 'Lỗi server nội bộ' }, { status: 500 });
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }
 
-// DELETE - Xóa địa chỉ
+// DELETE: Xóa địa chỉ
 export async function DELETE(request: NextRequest) {
+  await dbConnect();
+
   try {
-    await dbConnect();
-
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ success: false, message: 'Token không hợp lệ' }, { status: 401 });
-    }
-
-    const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
-    const userId = decoded.userId;
-
     const { searchParams } = new URL(request.url);
-    const addressId = searchParams.get('addressId');
+    const userId = searchParams.get("userId");
+    const { addressId } = await request.json();
 
-    if (!addressId) {
-      return NextResponse.json({ success: false, message: 'ID địa chỉ là bắt buộc' }, { status: 400 });
+    if (!userId || !addressId) {
+      return NextResponse.json({ success: false, message: "Thiếu userId hoặc addressId" }, { status: 400 });
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { $pull: { address: { _id: addressId } } },
-      { new: true }
-    ).select('address');
-
-    if (!updatedUser) {
-      return NextResponse.json({ success: false, message: 'Không tìm thấy người dùng' }, { status: 404 });
+    const user = await User.findById(userId);
+    if (!user) {
+      return NextResponse.json({ success: false, message: "Không tìm thấy người dùng" }, { status: 404 });
     }
 
-    return NextResponse.json({
-      success: true,
-      message: 'Xóa địa chỉ thành công',
-      data: updatedUser.address
-    });
+    const index = user.address.findIndex((addr: any) => addr._id === addressId);
+    if (index === -1) {
+      return NextResponse.json({ success: false, message: "Không tìm thấy địa chỉ" }, { status: 404 });
+    }
 
+    const wasDefault = user.address[index].isDefault;
+    user.address.splice(index, 1);
+
+    if (wasDefault && user.address.length > 0) {
+      user.address[0].isDefault = true;
+    }
+
+    await user.save();
+
+    return NextResponse.json({ success: true, message: "Xóa địa chỉ thành công" }, { status: 200 });
   } catch (error: any) {
-    console.error('DELETE /api/user/address error:', error);
-    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-      return NextResponse.json({ success: false, message: 'Token không hợp lệ hoặc đã hết hạn' }, { status: 401 });
-    }
-    return NextResponse.json({ success: false, message: 'Lỗi server nội bộ' }, { status: 500 });
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
   }
 }

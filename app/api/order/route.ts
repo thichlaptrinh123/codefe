@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     const {
       id_user,
       id_voucher,
-      products, // [{ id_variant, quantity, price }]
+      products, 
       shipping_fee,
       paymentMethod = "COD",
       shipping_type = "road",

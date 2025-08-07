@@ -19,8 +19,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-
-
     const formattedPhone = normalizePhone(phone);
     const user = await User.findOne({ phone: formattedPhone });
 
@@ -30,7 +28,6 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
-
 
     if (user.status === 0) {
       return NextResponse.json(
@@ -55,27 +52,34 @@ export async function POST(request: NextRequest) {
     }
 
     const token = jwt.sign(
-      { id: user._id, username: user.username, phone: user.phone, role: user.role },
+      {
+        id: user._id,
+        username: user.username,
+        phone: user.phone,
+        role: user.role,
+      },
       JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "365d" }
     );
 
-
-
     const { password: _, ...userInfo } = user.toObject();
-    return NextResponse.json({
+
+    const response = NextResponse.json({
       message: "Đăng nhập thành công",
       user: userInfo,
-      token,
     });
 
-    
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 365, // 1 năm
+    });
 
-
+    return response;
   } catch (error) {
     console.error("Lỗi đăng nhập:", error);
     return NextResponse.json({ message: "Có lỗi xảy ra" }, { status: 500 });
   }
-
-  
 }

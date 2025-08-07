@@ -44,7 +44,7 @@ export default function CheckoutForm({
   wards,
 }: Props) {
   return (
-    <form className="shipping-form">
+    <form className="shipping-form space-y-4">
       {/* Họ và tên */}
       <input
         type="text"
@@ -54,6 +54,7 @@ export default function CheckoutForm({
         onChange={(e) =>
           setShippingInfo((prev) => ({ ...prev, name: e.target.value }))
         }
+        className="w-full p-2 border rounded"
       />
 
       {/* Số điện thoại */}
@@ -65,16 +66,18 @@ export default function CheckoutForm({
         onChange={(e) =>
           setShippingInfo((prev) => ({ ...prev, phone: e.target.value }))
         }
+        className="w-full p-2 border rounded"
       />
 
       {/* Tỉnh / Phường */}
-      <div className="select-group">
+      <div className="flex gap-2">
         <select
           value={selectedProvince}
           onChange={(e) => {
             setSelectedProvince(e.target.value);
             setSelectedWard('');
           }}
+          className="w-1/2 p-2 border rounded"
         >
           <option value="">Chọn tỉnh / thành</option>
           {provinces.map((p) => (
@@ -88,6 +91,7 @@ export default function CheckoutForm({
           value={selectedWard}
           onChange={(e) => setSelectedWard(e.target.value)}
           disabled={!wards.length}
+          className="w-1/2 p-2 border rounded"
         >
           <option value="">Chọn phường / xã</option>
           {wards.map((w) => (
@@ -107,15 +111,17 @@ export default function CheckoutForm({
         onChange={(e) =>
           setShippingInfo((prev) => ({ ...prev, address: e.target.value }))
         }
+        className="w-full p-2 border rounded"
       />
 
       {/* Ghi chú */}
       <textarea
-        placeholder="Ghi chú đơn hàng"
+        placeholder="Ghi chú đơn hàng (tuỳ chọn)"
         value={shippingInfo.note}
         onChange={(e) =>
           setShippingInfo((prev) => ({ ...prev, note: e.target.value }))
         }
+        className="w-full p-2 border rounded"
       />
     </form>
   );

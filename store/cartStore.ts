@@ -42,18 +42,18 @@ export const useCartStore = create<CartState>()(
         }
       },
 
-      removeFromCart: (variantId) => {
+      removeFromCart: (productId) => {
         set({
           items: get().items.filter(
-            (i) => i.variantId !== variantId && i.productId !== variantId
+            (i) => i.productId !== productId && i.productId !== productId
           ),
         });
       },
 
-updateQuantity: (variantId, newQuantity) =>
+updateQuantity: (productId, newQuantity) =>
   set((state) => {
     const updatedItems = state.items.map((item) =>
-      item.variantId === variantId
+      item.productId === productId
         ? { ...item, quantity: newQuantity }
         : item
     );

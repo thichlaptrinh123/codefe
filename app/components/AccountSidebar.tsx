@@ -8,8 +8,8 @@ export default function AccountSidebar() {
 
   const navItems = [
     { href: '/user/account', label: 'Thông tin', icon: 'fa-regular fa-user' },
-    { href: '/user/accountoder', label: 'Lịch sử đơn hàng', icon: 'fas fa-box' },
-    { href: '/user/account/information', label: 'Địa chỉ', icon: 'fas fa-map-marker-alt' },
+    { href: '/user/account/orderhistory', label: 'Lịch sử đơn hàng', icon: 'fas fa-box' },
+    { href: '/user/account/address', label: 'Địa chỉ', icon: 'fas fa-map-marker-alt' },
     { href: '/user/account/changepassword', label: 'Đổi mật khẩu', icon: 'fas fa-lock' },
     { href: '/logout', label: 'Đăng xuất', icon: 'fas fa-right-from-bracket', danger: true },
   ];
@@ -22,7 +22,13 @@ export default function AccountSidebar() {
           <li key={href}>
             <Link
               href={href}
-              className={`flex items-center ${danger ? 'text-red-500' : 'text-gray-600'} hover:text-blue-600`}
+              className={`flex items-center px-2 py-1 rounded-md transition ${
+                pathname === href
+                  ? 'bg-blue-100 text-blue-600 font-medium'
+                  : danger
+                  ? 'text-red-500'
+                  : 'text-gray-600 hover:text-blue-600'
+              }`}
             >
               <i className={`${icon} mr-2`}></i> {label}
             </Link>

@@ -142,7 +142,7 @@ const nextProductSlide = () => {
                         onClick={() => {
                           const confirmDelete = window.confirm("Bạn có chắc chắn muốn xoá sản phẩm này khỏi giỏ hàng?");
                           if (confirmDelete) {
-                            removeItem(item.variantId);
+                            removeItem(item.productId);
                           }
                         }}
                       >
@@ -158,7 +158,7 @@ const nextProductSlide = () => {
                       className="quantity-btn"
                       onClick={() => {
                         if (item.quantity > 1) {
-                          updateQuantity(item.variantId, item.quantity - 1);
+                          updateQuantity(item.productId, item.quantity - 1);
                         }
                       }}
                     >
@@ -167,7 +167,7 @@ const nextProductSlide = () => {
                     <span className="quantity">{item.quantity}</span>
                     <button 
                       className="quantity-btn"
-                      onClick={() => updateQuantity(item.variantId, item.quantity + 1)}
+                      onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                     >
                       +
                     </button>
@@ -202,14 +202,9 @@ const nextProductSlide = () => {
               <span>{formatPrice(subtotal)}</span>
             </div>
             
-            <div className="summary-row">
-              <span>Phí vận chuyển:</span>
-              <span>{formatPrice(shipping)}</span>
-            </div>
-            
            <div className="summary-row total-row">
             <span>Tổng cộng</span>
-            <span className="total-price">{formatPrice(subtotal + shipping)}</span>
+            <span className="total-price">{formatPrice(subtotal)}</span>
           </div>
 
             

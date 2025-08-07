@@ -136,18 +136,17 @@ if (quantity > variant.stock_quantity) {
 }
 
 
-  addToCart({
-    productId: product._id,
-    name: product.name,
-    image: product.images[0],
-    price: variant.price,
-    sale: product.sale,
-    quantity: quantity,
-    variantId: variant._id,
-    color: variant.color,
-    size: variant.size,
-    hex: selectedColorObj.hex, 
-  });
+ addToCart({
+  productId: variant._id,
+  name: product.name,
+  image: product.images[0],
+  price: variant.price,
+  sale: product.sale,
+  quantity: quantity,
+  color: variant.color,
+  size: variant.size,
+  hex: selectedColorObj.hex, 
+});
 
   alert('Đã thêm vào giỏ hàng!');
 };

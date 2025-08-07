@@ -9,7 +9,8 @@ import CheckoutForm from '../components/checkout/CheckoutForm';
 import ShippingMethods from '../components/checkout/ShippingMethods';
 import PaymentMethods from '../components/checkout/PaymentMethods';
 import OrderSummary from '../components/checkout/OrderSummary';
-
+import { validateShippingInfo } from '../components/checkout/validateShippingInfo';
+import { useRouter } from 'next/navigation';
 interface Ward {
   name: string;
   mergedFrom: string[];
@@ -21,6 +22,7 @@ interface ProvinceData {
 }
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const cartItems = useCartStore((state) => state.items);
   const totalPrice = cartItems.reduce(
     (acc, item) => acc + item.quantity * item.price * (1 - (item.sale || 0) / 100),
@@ -48,6 +50,9 @@ export default function CheckoutPage() {
 
   const [shippingFeeRoad, setShippingFeeRoad] = useState<number | null>(null);
   const [shippingFeeFly, setShippingFeeFly] = useState<number | null>(null);
+
+  const clearCart = useCartStore((state) => state.clearCart);
+
 
   // 👉 Lấy user từ localStorage
 useEffect(() => {
@@ -241,6 +246,34 @@ useEffect(() => {
 //   };
 
 const handleSubmitOrder = async () => {
+  const normalize = (str: string) => str?.trim()?.replace(/\s+/g, ' ') || '';
+
+  // VALIDATE INPUT
+  if (!normalize(shippingInfo.name)) {
+    alert('Vui lòng nhập họ và tên');
+    return;
+  }
+
+  if (!normalize(shippingInfo.phone) || !/^0\d{9}$/.test(shippingInfo.phone)) {
+    alert('Vui lòng nhập số điện thoại hợp lệ (10 số, bắt đầu bằng 0)');
+    return;
+  }
+
+  if (!normalize(shippingInfo.address)) {
+    alert('Vui lòng nhập địa chỉ cụ thể');
+    return;
+  }
+
+  if (!normalize(selectedProvince)) {
+    alert('Vui lòng chọn tỉnh / thành phố');
+    return;
+  }
+
+  if (!normalize(selectedWard)) {
+    alert('Vui lòng chọn phường / xã');
+    return;
+  }
+
   try {
     const products = cartItems.map((item) => ({
       id_product_variant: item.productId,
@@ -248,9 +281,7 @@ const handleSubmitOrder = async () => {
       price: item.price * (1 - (item.sale || 0) / 100),
     }));
 
-    // const currentProvinceData = data.find((p) => p.province === selectedProvince);
-    // const currentWardData = currentProvinceData?.wards.find((w) => w.name === selectedWard);
-    // const inferredDistrict = extractDistrictFromMerged(currentWardData?.mergedFrom);
+    const fullAddress = `${normalize(shippingInfo.address)}, ${normalize(selectedWard)}, ${normalize(selectedProvince)}`;
 
     const payload = {
       id_user: user?._id,
@@ -261,10 +292,7 @@ const handleSubmitOrder = async () => {
       receiver_name: shippingInfo.name,
       receiver_phone: shippingInfo.phone,
       note: shippingInfo.note,
-      address: shippingInfo.address,
-      ward: selectedWard,
-      // district: inferredDistrict,
-      province: selectedProvince,
+      address: fullAddress,
       products,
     };
 
@@ -276,15 +304,20 @@ const handleSubmitOrder = async () => {
 
     const result = await res.json();
 
-    if (!result.success) return alert('Tạo đơn hàng thất bại.');
+    if (!result.success) {
+      return alert('Tạo đơn hàng thất bại.');
+    }
+    alert('Đặt hàng thành công');
 
-    // ❌ Tạm thời không gửi lên GHTK
-    alert("Đặt hàng thành công");
+    clearCart(); 
+    router.push('/user/account');
+
   } catch (err) {
     console.error('Lỗi khi gửi đơn hàng:', err);
     alert('Đã có lỗi xảy ra.');
   }
 };
+
 
 
   return (

@@ -1,0 +1,128 @@
+
+    .breadcrumb-login {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto; /* căn giữa */
+  padding-top: 15px;
+    font-size: 14px;
+    color: #666;
+  }
+  .breadcrumb-login a {
+    color: black  ;
+    text-decoration: none;
+  }
+  .breadcrumb-login a:hover {
+    color: #B3123D;
+  }
+    .login-card-login {
+      width: 437px;
+      background: #ffffff;
+      padding: 40px 32px 48px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.12);
+      text-align: center;
+      margin: 50px auto;
+    }
+
+    .login-card-login h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #960130;
+      margin-bottom: 20px;
+    }
+
+    .google-btn-login {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      border: 2px solid rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+      padding: 5px 0;
+      font-weight: 500;
+      color: #444;
+      background: #fff;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .google-btn-login:hover {
+      background: #fafafa;
+    }
+
+    .google-btn-login img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .field-login {
+      margin-top: 20px;
+    }
+
+    .field-login input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #000;
+      border-radius: 4px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .field-login input:focus {
+      border-color: #8b003b;
+    }
+
+    .primary-btn-login {
+      margin-top: 20px;
+      width: 150px;
+      padding: 14px 0;
+      background: #960130;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .primary-btn-login:hover {
+      background: #B3123D ;
+    }
+
+    .link-row-login {
+      margin  : 10px;
+      font-size: 14px;
+    }
+
+    .link-row-login a {
+      color: #666666;
+      text-decoration: none;
+    }
+
+    .link-row-login a:hover {
+      color: #B3123D;
+      text-decoration: none;
+    }
+
+    .separator-login {
+      margin: 10px 0 0;
+      border-top: 1px solid #ddd;
+    }
+
+    .signup-login {
+      margin-top: 10px;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .signup-login a {
+      color: #666;
+      text-decoration: none;
+    }
+
+    .signup-login a:hover {
+      color: #B3123D;
+    }

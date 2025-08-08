@@ -1,0 +1,77 @@
+
+     .breadcrumb-register {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto; /* căn giữa */
+  padding-top: 15px;
+    font-size: 14px;
+    color: #666;
+  }
+  .breadcrumb-register a {
+    color: black  ;
+    text-decoration: none;
+  }
+  .breadcrumb-register a:hover {
+    color: #B3123D;
+  }
+.container-register {
+  background-color: white;
+  padding: 20px 24px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 449px;
+  margin: 50px auto;
+}
+
+.title-register {
+  color: #960130    ;
+  font-size: 32px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.input-register {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 20px;
+  border: 1px solid #999;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.confirm-btn-register {
+  width: 180px;
+  background-color:  #960130;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.confirm-btn-register:hover {
+  background-color:#B3123D;
+}
+
+.divider-register {
+  border-top: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.back-link-register {
+  color: #444;
+  text-decoration: none;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.back-link-register:hover {
+  color: #B3123D;
+}
+.arrow-left-register {
+  font-size: 16px;
+}

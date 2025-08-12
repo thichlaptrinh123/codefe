@@ -70,7 +70,6 @@ const ProductDetail = ({ params }: { params: Promise<{ id: string }> }) => {
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [colorOptions, setColorOptions] = useState<ColorOption[]>([]);
   const [product, setProduct] = useState<Product | null>(null);
-  // const [colorOptions, setColorOptions] = useState([]);
   const [mounted, setMounted] = useState(false);
   const [sizes, setSizes] = useState<string[]>([]); 
   const [selectedSize, setSelectedSize] = useState<string | null>(null);

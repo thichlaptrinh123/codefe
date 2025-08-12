@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import '../css_user/blog.css';
+import '@/public/styles/blog.css';
 import { stripHtmlTags } from '@/app/admin/components/shared/stripHtmlTags';
 
 interface Blog {

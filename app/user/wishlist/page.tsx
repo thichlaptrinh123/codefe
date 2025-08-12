@@ -1,7 +1,7 @@
 'use client';
 import React, { useState, useMemo, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Heart } from 'lucide-react';
-import '../css_user/products.css';
+import '@/public/styles/products.css'; 
 import { Product } from "../../admin/components/product/product-types";
 
 

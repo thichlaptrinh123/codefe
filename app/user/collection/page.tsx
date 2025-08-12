@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import "../user_css/collection.css"
-import Link from "next/link"; // ✅ sửa đúng chữ hoa
+import "@/public/styles/collection.css"; 
+import Link from "next/link"; 
 import MaxWidthWrapper from "../../components/maxWidthWrapper";
 import Image from "next/image";
 

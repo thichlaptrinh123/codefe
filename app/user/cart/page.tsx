@@ -28,7 +28,7 @@ interface ProductNew {
   hasDiscount: boolean;
 }
 
-// Component riêng cho input số lượng
+
 function QuantityInput({
   quantity,
   stock_quantity,
@@ -113,6 +113,9 @@ export default function CartPage() {
   const removeItem = useCartStore((state) => state.removeFromCart);
   const [sliderProducts, setSliderProducts] = useState<ProductNew[]>([]);
 
+
+
+
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity * (1 - (item.sale || 0) / 100),
     0
@@ -120,22 +123,29 @@ export default function CartPage() {
 
   const totalProducts = cartItems.reduce((total, item) => total + item.quantity, 0);
 
-  const shipping = subtotal > 500000 ? 0 : 30000; 
-  const total = subtotal + shipping;
+
+  const total = subtotal;
 
   const [promoCode, setPromoCode] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
 
   const router = useRouter();
+  const items = useCartStore((state) => state.items);
 
-  const handleCheckoutClick = () => {
+ const handleCheckoutClick = () => {
     const user = localStorage.getItem('user');
     if (!user) {
       router.push('/user/login');
-    } else {
-      router.push('/user/pay');
+      return;
     }
+
+    if (items.length === 0) {
+      alert('Giỏ hàng của bạn đang trống. Vui lòng thêm sản phẩm trước khi thanh toán.');
+      return;
+    }
+
+    router.push('/user/pay');
   };
 
   const prevProductSlide = () => {
@@ -264,11 +274,7 @@ export default function CartPage() {
               <span>Tổng tiền:</span>
               <span>{formatPrice(subtotal)}</span>
             </div>
-            
-            <div className="summary-row">
-              <span>Phí vận chuyển:</span>
-              <span>{shipping === 0 ? 'Miễn phí' : formatPrice(shipping)}</span>
-            </div>
+             
             
            <div className="summary-row total-row">
             <span>Tổng cộng</span>

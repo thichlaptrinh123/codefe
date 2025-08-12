@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import MaxWidthWrapper from "../maxWidthWrapper";
+import MaxWidthWrapper from "@/app/components/maxWidthWrapper";
 import ProductCard from "./product-card";
 import { Roboto } from "next/font/google";
 
